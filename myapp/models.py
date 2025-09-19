@@ -17,7 +17,4 @@ ROLE_CHOICES = [
     ('Admin', 'Admin'),
 ]
 
-class MYAPI(models.Model):
-    saas = models.TextField()
-
 
