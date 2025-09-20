@@ -19,10 +19,21 @@ from django.urls import path,include
 from django.conf import settings  
 from django.conf.urls.static import static 
 from myapp.views import *
+from django.urls import path
+from myapp.views import *
+from rest_framework_simplejwt.views import(
+    TokenObtainPairView,TokenRefreshView
+
+)
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('myapp.urls')),
     path('api/register/', RegisterView.as_view(), name='register'),
+   # path('get-role/', get_user_role),
+    path('login/',TokenObtainPairView.as_view(),name="login"),
+    path('api/token/referesh/',TokenRefreshView.as_view(),name="referesh3"),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
