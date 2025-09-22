@@ -22,5 +22,25 @@ class RegisterView(APIView):
 
 
 
+from rest_framework import viewsets
+from .models import Plan, Testimonial, FAQ
+from .serializers import PlanSerializer, TestimonialSerializer, FAQSerializer
+
+class PlanViewSet(viewsets.ModelViewSet):
+    queryset = Plan.objects.all()
+    serializer_class = PlanSerializer
+
+class TestimonialViewSet(viewsets.ModelViewSet):
+    queryset = Testimonial.objects.all()
+    serializer_class = TestimonialSerializer
+
+class FAQViewSet(viewsets.ModelViewSet):
+    queryset = FAQ.objects.all()
+    serializer_class = FAQSerializer
+
+
+
+
+
     
 

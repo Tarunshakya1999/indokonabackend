@@ -42,4 +42,23 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
 
 
+from rest_framework import serializers
+from .models import Plan, Testimonial, FAQ
+
+class PlanSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Plan
+        fields = '__all__'
+
+class TestimonialSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Testimonial
+        fields = '__all__'
+
+class FAQSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FAQ
+        fields = '__all__'
+
+
 
