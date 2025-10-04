@@ -34,6 +34,8 @@ urlpatterns = [
    # path('get-role/', get_user_role),
     path('login/',TokenObtainPairView.as_view(),name="login"),
     path('api/token/referesh/',TokenRefreshView.as_view(),name="referesh3"),
+    path("api/contact/", contact_view, name="contact"),
+
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
