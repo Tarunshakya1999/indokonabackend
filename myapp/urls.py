@@ -4,9 +4,9 @@ from .views import *
 
 router = DefaultRouter()
 router.register(r'hero', HeroViewSet)
-router.register('plans', PlanViewSet)
-router.register('testimonials', TestimonialViewSet)
-router.register('faqs', FAQViewSet)
+# router.register('plans', PlanViewSet)
+# router.register('testimonials', TestimonialViewSet)
+# router.register('faqs', FAQViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

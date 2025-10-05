@@ -27,21 +27,21 @@ class RegisterView(APIView):
 
 
 
-from rest_framework import viewsets
-from .models import Plan, Testimonial, FAQ
-from .serializers import PlanSerializer, TestimonialSerializer, FAQSerializer
+# from rest_framework import viewsets
+# from .models import Plan, Testimonial, FAQ
+# from .serializers import PlanSerializer, TestimonialSerializer, FAQSerializer
 
-class PlanViewSet(viewsets.ModelViewSet):
-    queryset = Plan.objects.all()
-    serializer_class = PlanSerializer
+# class PlanViewSet(viewsets.ModelViewSet):
+#     queryset = Plan.objects.all()
+#     serializer_class = PlanSerializer
 
-class TestimonialViewSet(viewsets.ModelViewSet):
-    queryset = Testimonial.objects.all()
-    serializer_class = TestimonialSerializer
+# class TestimonialViewSet(viewsets.ModelViewSet):
+#     queryset = Testimonial.objects.all()
+#     serializer_class = TestimonialSerializer
 
-class FAQViewSet(viewsets.ModelViewSet):
-    queryset = FAQ.objects.all()
-    serializer_class = FAQSerializer
+# class FAQViewSet(viewsets.ModelViewSet):
+#     queryset = FAQ.objects.all()
+#     serializer_class = FAQSerializer
 
 
 
@@ -54,7 +54,7 @@ def contact_view(request):
         message = data.get("message")
         number = data.get("phone")
         
-        subject = f"New Contact Form Message from {name}"
+        subject = f"New Contact Message from {name}"
         body = f"Name: {name}\nEmail: {email}\nPhone Number : {number}\nMessage: {message}"
 
         try:
