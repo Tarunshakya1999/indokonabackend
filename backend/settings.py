@@ -54,17 +54,23 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",  
     "https://indokonafrontend.vercel.app",
 ]
-CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOW_HEADERS = [
+    'content-type',
+    'authorization',
+    'x-csrftoken',
+    'accept',
+    'origin',
+    'user-agent',
+    'x-requested-with',
+]
+
 
 CORS_ALLOW_ALL_ORIGINS = True
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://indokonafrontend.vercel.app",
-    "https://djangobackend-e7rf.onrender.com",
-]
+
 
 
 ROOT_URLCONF = 'backend.urls'
