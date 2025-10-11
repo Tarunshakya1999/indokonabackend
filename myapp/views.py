@@ -1,6 +1,6 @@
 from rest_framework import viewsets
-from .models import Hero
-from .serializers import HeroSerializer
+from .models import *
+from .serializers import *
 from django.core.mail import send_mail
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -14,6 +14,12 @@ from myapp.serializers import UserRegisterSerializer
 class HeroViewSet(viewsets.ModelViewSet):
     queryset = Hero.objects.all()
     serializer_class = HeroSerializer
+
+
+class PDFAPI(viewsets.ModelViewSet):
+    queryset = PDF.objects.all()
+    serializer_class = PDFSerializer
+
 
 
 

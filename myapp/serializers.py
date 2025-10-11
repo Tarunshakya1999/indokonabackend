@@ -1,11 +1,18 @@
 from rest_framework import serializers
-from .models import Hero, ROLE_CHOICES 
+from .models import Hero, ROLE_CHOICES ,PDF
 from django.contrib.auth.models import User
 
 
 class HeroSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hero
+        fields = '__all__'
+
+
+
+class PDFSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PDF
         fields = '__all__'
 
 

@@ -44,6 +44,11 @@ class FAQ(models.Model):
 
     def __str__(self):
         return self.question
+    
+class PDF(models.Model):
+    pdf = models.FileField(upload_to="pdf")
+    def __str__(self):
+        return self.pdf
 
 
 
