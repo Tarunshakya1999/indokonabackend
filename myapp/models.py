@@ -46,9 +46,10 @@ class FAQ(models.Model):
         return self.question
     
 class PDF(models.Model):
+    # ✅ Fix: Allowing the field to be NULL in the database
+    name = models.TextField(null=True, blank=True)
     pdf = models.FileField(upload_to="pdf")
+
     def __str__(self):
-        return self.pdf
-
-
-
+        # Best practice: Ensure str() doesn't return None if name is null
+        return self.name or f"PDF ID: {self.id}"
