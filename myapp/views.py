@@ -21,6 +21,13 @@ class PDFAPI(viewsets.ModelViewSet):
     serializer_class = PDFSerializer
 
 
+    # ✅ Fix: Overriding get_serializer_context to pass the request
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['request'] = self.request
+        return context
+
+
 
 
 class RegisterView(APIView):
