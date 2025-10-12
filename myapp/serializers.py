@@ -6,11 +6,9 @@ from django.contrib.auth.models import User
 class HeroSerializer(serializers.ModelSerializer):
     class Meta:
         model = Hero
-        fields = '__all__'
+        fields = ['pdf']
 
 
-from rest_framework import serializers
-from .models import PDF
 class PDFSerializer(serializers.ModelSerializer):
     class Meta:
         model = PDF
