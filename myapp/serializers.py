@@ -12,7 +12,7 @@ class HeroSerializer(serializers.ModelSerializer):
 class PDFSerializer(serializers.ModelSerializer):
     class Meta:
         model = PDF
-        fields = "_all_"
+        fields = '__all__'
 
 class UserRegisterSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(write_only=True, style={'input_type': 'password'})
