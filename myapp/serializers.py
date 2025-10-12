@@ -11,25 +11,10 @@ class HeroSerializer(serializers.ModelSerializer):
 
 from rest_framework import serializers
 from .models import PDF
-
 class PDFSerializer(serializers.ModelSerializer):
-    # ✅ Fix: Use SerializerMethodField to get the absolute URL
-    pdf_url = serializers.SerializerMethodField()
-
     class Meta:
         model = PDF
-        # Ab hum 'pdf' ki jagah 'pdf_url' field bhejenge
-        fields = ('id', 'name', 'pdf') 
-        # Agar sab fields chahiye toh fields = '__all__' rehne do, bas neeche get_pdf_url() method add karo
-
-    def get_pdf_url(self, obj):
-        # Request object serializer ke context mein hota hai
-        request = self.context.get('request')
-        if obj.pdf and request:
-            # FileField se absolute URL generate karo
-            return request.build_absolute_uri(obj.pdf.url)
-        return None
-
+        fields = "_all_"
 
 class UserRegisterSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(write_only=True, style={'input_type': 'password'})
