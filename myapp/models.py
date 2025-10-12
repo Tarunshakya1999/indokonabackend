@@ -17,16 +17,17 @@ ROLE_CHOICES = [
     ('Admin', 'Admin'),
 ]
 
-from django.db import models
 
 class Plan(models.Model):
-    name = models.CharField(max_length=100)
-    setup_cost = models.CharField(max_length=50)
-    renewal = models.CharField(max_length=50)
-    notes = models.TextField(blank=True)
+    type = models.TextField(null=True, blank=True)
+    img = models.ImageField(upload_to="plans", null=True, blank=True)
+    setup = models.CharField(max_length=50, null=True, blank=True)
+    renewal = models.CharField(max_length=50, null=True, blank=True)
+    notes = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return self.name
+        return self.type or "Plan"
+
 
 
 class Testimonial(models.Model):

@@ -21,6 +21,11 @@ class PDFAPI(viewsets.ModelViewSet):
     serializer_class = PDFSerializer
 
 
+class PlansAPI(viewsets.ModelViewSet):
+    queryset = PDF.objects.all()
+    serializer_class = PDFSerializer
+
+
 
 class RegisterView(APIView):
     def post(self, request):
