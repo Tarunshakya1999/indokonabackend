@@ -22,8 +22,8 @@ class PDFAPI(viewsets.ModelViewSet):
 
 
 class PlansAPI(viewsets.ModelViewSet):
-    queryset = PDF.objects.all()
-    serializer_class = PDFSerializer
+    queryset = Plan.objects.all()
+    serializer_class = PlanSerializer
 
 
 

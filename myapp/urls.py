@@ -5,6 +5,7 @@ from .views import *
 router = DefaultRouter()
 router.register(r'hero', HeroViewSet)
 router.register(r'pdf', PDFAPI)
+router.register(r'plans',PlansAPI)
 # router.register('plans', PlanViewSet)
 # router.register('testimonials', TestimonialViewSet)
 # router.register('faqs', FAQViewSet)
