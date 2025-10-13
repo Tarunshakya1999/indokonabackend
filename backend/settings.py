@@ -74,7 +74,7 @@ else:
             'NAME': 'indokonadatabase',
             'USER': 'indokonadatabase_user',
             'PASSWORD': 'XgLvGcjumRFi1m63jPabFFjnnu4YwnqN',
-            'HOST': 'dpg-d3mk042li9vc738412qg-a.postgres.render.com',  # Render full host
+            'HOST': 'dpg-d3mk042li9vc738412qg-a',  # Render full host
             'PORT': '5432',
         }
     }
