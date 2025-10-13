@@ -81,5 +81,11 @@ def contact_view(request):
     return JsonResponse({"status": "error", "msg": "Invalid request"})
 
 
+
+class TestimonialFeedbackAPI(viewsets.ModelViewSet):
+    queryset = Testimonial.objects.all()
+    serializer_class = TestimonialSerializer
+
+
     
 
