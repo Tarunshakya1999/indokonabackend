@@ -61,10 +61,11 @@ DATABASES = {
         'NAME': 'indokonadatabase',
         'USER': 'indokonadatabase_user',
         'PASSWORD': 'XgLvGcjumRFi1m63jPabFFjnnu4YwnqN',
-        'HOST': 'dpg-d3mk042li9vc738412qg-a',
+        'HOST': 'dpg-d3mk042li9vc738412qg-a.postgres.render.com',  # <- FULL host
         'PORT': '5432',
     }
 }
+
 
 
 # Password validation
