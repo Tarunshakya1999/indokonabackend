@@ -29,12 +29,13 @@ class Plan(models.Model):
         return self.type or "Plan"
 
 
-
+# models.py
 class Testimonial(models.Model):
     name = models.CharField(max_length=100)
     role = models.CharField(max_length=100)
     message = models.TextField()
-    videos = models.FileField(upload_to="videos",null=True,blank=True)
+    videos = models.FileField(upload_to="videos", null=True, blank=True)
+    rating = models.PositiveSmallIntegerField(default=5)  # 1 to 5 rating
 
     def __str__(self):
         return self.name
