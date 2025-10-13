@@ -81,11 +81,16 @@ def contact_view(request):
     return JsonResponse({"status": "error", "msg": "Invalid request"})
 
 
+# views.py
+from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework import viewsets
+from .models import Testimonial
+from .serializers import TestimonialSerializer
 
 class TestimonialFeedbackAPI(viewsets.ModelViewSet):
     queryset = Testimonial.objects.all()
     serializer_class = TestimonialSerializer
-
+    parser_classes = (MultiPartParser, FormParser)  # <-- ye add karo
 
     
 
