@@ -55,16 +55,30 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'backend.wsgi.application'
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'indokonadatabase',
-        'USER': 'indokonadatabase_user',
-        'PASSWORD': 'XgLvGcjumRFi1m63jPabFFjnnu4YwnqN',
-        'HOST': 'dpg-d3mk042li9vc738412qg-a.postgres.render.com',  # <- FULL host
-        'PORT': '5432',
+import os
+
+# Agar environment variable set hai, use karo (Render ke liye)
+DATABASE_URL = os.environ.get('DATABASE_URL')  # optional, agar Render ne provide kiya ho
+
+if DATABASE_URL:
+    # Render ya Heroku style URL se connect karne ke liye
+    import dj_database_url
+    DATABASES = {
+        'default': dj_database_url.parse(DATABASE_URL)
     }
-}
+else:
+    # Local ya manual PostgreSQL settings
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'indokonadatabase',
+            'USER': 'indokonadatabase_user',
+            'PASSWORD': 'XgLvGcjumRFi1m63jPabFFjnnu4YwnqN',
+            'HOST': 'dpg-d3mk042li9vc738412qg-a.postgres.render.com',  # Render full host
+            'PORT': '5432',
+        }
+    }
+
 
 
 
