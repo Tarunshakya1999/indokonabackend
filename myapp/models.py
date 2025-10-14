@@ -36,6 +36,7 @@ class Testimonial(models.Model):
     message = models.TextField()
     videos = models.FileField(upload_to="videos", null=True, blank=True)
     rating = models.PositiveSmallIntegerField(default=5)  # 1 to 5 rating
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)  # ✅ Auto timestamp
 
     def __str__(self):
         return self.name
