@@ -107,12 +107,6 @@ DATABASES = {
     }
 }
 
-# settings.py
-import dj_database_url
-DATABASES = {
-    "default": dj_database_url.config(default="postgres://indokonadatabase_user:XgLvGcjumRFi1m63jPabFFjnnu4YwnqN@dpg-d3mk042li9vc738412qg-a.render.com:5432/indokonadatabase")
-}
-
 
 
 # Password validation
