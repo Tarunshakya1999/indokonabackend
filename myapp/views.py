@@ -100,12 +100,13 @@ from rest_framework.decorators import action
 from rest_framework.parsers import MultiPartParser, FormParser
 from .models import DigitalProducts, Cart
 from .serializers import ProductSerializer, CartSerializer
+from rest_framework.permissions import AllowAny
 
 class ProductAPI(viewsets.ModelViewSet):
     queryset = DigitalProducts.objects.all()
     serializer_class = ProductSerializer
     parser_classes = (MultiPartParser, FormParser)
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [AllowAny]  
     
 class CartAPI(viewsets.ModelViewSet):
     queryset = Cart.objects.all()  # ✅ Add this
