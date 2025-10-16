@@ -70,7 +70,7 @@ class FAQSerializer(serializers.ModelSerializer):
 
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
-        model = FAQ
+        model = DigitalProducts
         fields = '__all__'
 
 
