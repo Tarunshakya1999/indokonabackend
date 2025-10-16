@@ -92,5 +92,30 @@ class TestimonialFeedbackAPI(viewsets.ModelViewSet):
     serializer_class = TestimonialSerializer
     parser_classes = (MultiPartParser, FormParser)  # <-- ye add karo
 
+
+
+from rest_framework import viewsets, permissions
+from rest_framework.response import Response
+from rest_framework.decorators import action
+from rest_framework.parsers import MultiPartParser, FormParser
+from .models import DigitalProducts, Cart
+from .serializers import ProductSerializer, CartSerializer
+
+class ProductAPI(viewsets.ModelViewSet):
+    queryset = DigitalProducts.objects.all()
+    serializer_class = ProductSerializer
+    parser_classes = (MultiPartParser, FormParser)
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     
+class CartAPI(viewsets.ModelViewSet):
+    queryset = Cart.objects.all()  # ✅ Add this
+    serializer_class = CartSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Cart.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
 

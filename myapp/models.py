@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 class Hero(models.Model):
@@ -57,3 +58,29 @@ class PDF(models.Model):
     def __str__(self):
         # Best practice: Ensure str() doesn't return None if name is null
         return self.name or f"PDF ID: {self.id}"
+    
+
+
+class DigitalProducts(models.Model):
+    productname = models.TextField()
+    productdescription = models.TextField()
+    productprice = models.IntegerField()
+    productdiscounted_price = models.IntegerField()
+    productimg = models.ImageField(upload_to="uploadimage")
+    productrating = models.PositiveSmallIntegerField(default=5) 
+
+    def __str__(self):
+        return self.productname
+    
+
+
+class Cart(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(DigitalProducts, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.product.productname}"
+
+
+

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Hero, ROLE_CHOICES ,PDF
 from django.contrib.auth.models import User
+from myapp.models import *
 
 
 class HeroSerializer(serializers.ModelSerializer):
@@ -64,6 +65,26 @@ class FAQSerializer(serializers.ModelSerializer):
     class Meta:
         model = FAQ
         fields = '__all__'
+
+
+
+class ProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FAQ
+        fields = '__all__'
+
+
+
+class CartSerializer(serializers.ModelSerializer):
+    product = ProductSerializer(read_only=True)
+    product_id = serializers.PrimaryKeyRelatedField(
+        queryset=DigitalProducts.objects.all(), write_only=True, source='product'
+    )
+
+    class Meta:
+        model = Cart
+        fields = ['id', 'user', 'product', 'product_id', 'quantity']
+        read_only_fields = ['user']
 
 
 
