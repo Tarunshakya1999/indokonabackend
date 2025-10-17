@@ -88,3 +88,9 @@ class CartSerializer(serializers.ModelSerializer):
 
 
 
+
+
+class ContactMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactMessage
+        fields = '__all__'
