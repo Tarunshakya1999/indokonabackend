@@ -54,6 +54,12 @@ class RegisterView(APIView):
 #     serializer_class = FAQSerializer
 
 
+from django.core.mail import send_mail
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
+import json
+from .models import ContactMessage
 
 @csrf_exempt
 def contact_view(request):
@@ -61,24 +67,34 @@ def contact_view(request):
         data = json.loads(request.body)
         name = data.get("name")
         email = data.get("email")
+        phone = data.get("phone")
         message = data.get("message")
-        number = data.get("phone")
-        
-        subject = f"New Contact Message from {name}"
-        body = f"Name: {name}\nEmail: {email}\nPhone Number : {number}\nMessage: {message}"
 
-        try:
-            send_mail( 
-                subject,
-                body,
-                "shakyatarun32@gmail.com",  
-                ["shakyatarun32@gmail.com"], 
-                fail_silently=False,
-            )
-            return JsonResponse({"status": "success", "msg": "Message sent successfully!"})
-        except Exception as e:
-            return JsonResponse({"status": "error", "msg": str(e)})
-    return JsonResponse({"status": "error", "msg": "Invalid request"})
+        # Save to DB
+        ContactMessage.objects.create(
+            name=name, email=email, phone=phone, message=message
+        )
+
+        # Send email
+        subject = f"New Contact Message from {name}"
+        body = f"""
+        You have received a new message:
+        Name: {name}
+        Email: {email}
+        Phone: {phone}
+        Message: {message}
+        """
+        send_mail(
+            subject,
+            body,
+            'shakyatarun32@gmail.com',  # sender
+            ['shakyatarun32@gmail.com'],  # receiver (admin)
+            fail_silently=False,
+        )
+
+        return JsonResponse({"success": "Message sent successfully!"})
+
+    return JsonResponse({"error": "Invalid request"}, status=400)
 
 
 # views.py
