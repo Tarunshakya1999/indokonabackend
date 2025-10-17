@@ -106,7 +106,7 @@ class ProductAPI(viewsets.ModelViewSet):
     queryset = DigitalProducts.objects.all()
     serializer_class = ProductSerializer
     parser_classes = (MultiPartParser, FormParser)
-    permission_classes = [AllowAny]  
+    permission_classes = [permissions.IsAuthenticated]
     
 class CartAPI(viewsets.ModelViewSet):
     queryset = Cart.objects.all()  # ✅ Add this
