@@ -60,42 +60,39 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 import json
 from .models import ContactMessage
+from rest_framework.decorators import api_view
+# myapp/views.py
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from .serializers import ContactMessageSerializer
+from django.core.mail import send_mail
 
-@csrf_exempt
+@api_view(['POST'])
 def contact_view(request):
-    if request.method == "POST":
-        data = json.loads(request.body)
-        name = data.get("name")
-        email = data.get("email")
-        phone = data.get("phone")
-        message = data.get("message")
-
-        # Save to DB
-        ContactMessage.objects.create(
-            name=name, email=email, phone=phone, message=message
-        )
+    serializer = ContactMessageSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()  # save to DB
 
         # Send email
-        subject = f"New Contact Message from {name}"
+        subject = f"New Contact Message from {serializer.data['name']}"
         body = f"""
-        You have received a new message:
-        Name: {name}
-        Email: {email}
-        Phone: {phone}
-        Message: {message}
+        Name: {serializer.data['name']}
+        Email: {serializer.data['email']}
+        Phone: {serializer.data['phone']}
+        Message: {serializer.data['message']}
         """
         send_mail(
             subject,
             body,
-            'indokonacreditbazar@gmail.com',  # sender
-            ['indokonacreditbazar@gmail.com'],  # receiver (admin)
+            'shakyatarun32@gmail.com',  # sender
+            ['shakyatarun32@gmail.com'],  # receiver
             fail_silently=False,
         )
 
-        return JsonResponse({"success": "Message sent successfully!"})
-
-    return JsonResponse({"error": "Invalid request"}, status=400)
-
+        return Response({"success": "Message sent successfully!"}, status=status.HTTP_201_CREATED)
+    
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # views.py
 from rest_framework.parsers import MultiPartParser, FormParser
