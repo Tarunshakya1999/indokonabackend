@@ -87,8 +87,8 @@ def contact_view(request):
         send_mail(
             subject,
             body,
-            'shakyatarun32@gmail.com',  # sender
-            ['shakyatarun32@gmail.com'],  # receiver (admin)
+            'indokonacreditbazar@gmail.com',  # sender
+            ['indokonacreditbazar@gmail.com'],  # receiver (admin)
             fail_silently=False,
         )
 
