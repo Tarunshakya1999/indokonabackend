@@ -2,9 +2,8 @@ from rest_framework import viewsets
 from .models import *
 from .serializers import *
 from django.core.mail import send_mail
-from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-import json
+
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -131,5 +130,11 @@ class CartAPI(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+
+class BlogViewSet(viewsets.ModelViewSet):
+    queryset = Blog.objects.all().order_by('-id')
+    serializer_class = BlogSerializer
 
 

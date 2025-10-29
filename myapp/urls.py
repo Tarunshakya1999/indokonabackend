@@ -9,6 +9,7 @@ router.register(r'plans',PlansAPI)
 router.register(r'feedback',TestimonialFeedbackAPI)
 router.register(r'product',ProductAPI)
 router.register(r'cart', CartAPI)
+router.register('blogs', BlogViewSet)
 
 
 urlpatterns = [
