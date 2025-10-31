@@ -138,3 +138,5 @@ class BlogViewSet(viewsets.ModelViewSet):
     serializer_class = BlogSerializer
 
 
+class P:
+    pass
