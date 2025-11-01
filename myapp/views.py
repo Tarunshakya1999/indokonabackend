@@ -139,5 +139,20 @@ class BlogViewSet(viewsets.ModelViewSet):
     serializer_class = BlogSerializer
 
 
-class P:
-    pass
+
+
+
+from django.shortcuts import render, get_object_or_404
+from .models import Product
+
+def product_share_preview(request, id):
+    product = get_object_or_404(Product, id=id)
+
+    context = {
+        "title": product.productname,
+        "description": product.productdescription,
+        "image": product.productimg.url if product.productimg else "",
+        "url": f"https://indokonabackend-1.onrender.com/share/product/{id}/"
+    }
+
+    return render(request, "og_product.html", context)
