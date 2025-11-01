@@ -63,7 +63,7 @@ class PDF(models.Model):
 
 class DigitalProducts(models.Model):
     productname = models.TextField()
-    productdescription = models.TextField()
+    productdescription = models.CharField(max_length=1000)
     productprice = models.IntegerField()
     productdiscounted_price = models.IntegerField()
     productimg = models.ImageField(upload_to="uploadimage")
