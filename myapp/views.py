@@ -146,7 +146,7 @@ from django.shortcuts import render, get_object_or_404
 from .models import Product
 
 def product_share_preview(request, id):
-    product = get_object_or_404(Product, id=id)
+    product = get_object_or_404(DigitalProducts, id=id)
 
     context = {
         "title": product.productname,
