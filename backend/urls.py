@@ -35,7 +35,7 @@ urlpatterns = [
     path('login/',TokenObtainPairView.as_view(),name="login"),
     path('api/token/referesh/',TokenRefreshView.as_view(),name="referesh3"),
     path("api/contact/", contact_view, name="contact"),
-    path("api/share/product/<int:id>/", product_share_api, name="product_share_api"),
+    # path("api/share/product/<int:id>/", product_share_api, name="product_share_api"),
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

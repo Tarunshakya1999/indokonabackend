@@ -141,18 +141,22 @@ class BlogViewSet(viewsets.ModelViewSet):
 
 
 
+# from rest_framework.response import Response
+# from rest_framework.decorators import api_view
+# from django.shortcuts import get_object_or_404
+# from .models import DigitalProducts
 
-from django.shortcuts import render, get_object_or_404
-from .models import Product
+# @api_view(['GET'])
+# def product_share_api(request, id):
+#     product = get_object_or_404(DigitalProducts, id=id)
 
-def product_share_preview(request, id):
-    product = get_object_or_404(DigitalProducts, id=id)
+#     data = {
+#         "id": product.id,
+#         "title": product.productname,
+#         "description": product.productdescription,
+#         "image": request.build_absolute_uri(product.productimg.url) if product.productimg else "",
+#         "share_url": f"https://indokona.com/share/product/{id}/",
+#         "product_url": f"https://indokona.com/product/{id}"
+#     }
 
-    context = {
-        "title": product.productname,
-        "description": product.productdescription,
-        "image": product.productimg.url if product.productimg else "",
-        "url": f"https://indokonabackend-1.onrender.com/share/product/{id}/"
-    }
-
-    return render(request, "og_product.html", context)
+#     return Response(data)
