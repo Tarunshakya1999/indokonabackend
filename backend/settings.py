@@ -228,3 +228,8 @@ EMAIL_USE_TLS = True
 # EMAIL_HOST_PASSWORD = 'jxam mftt vccq zhmh'  # App Password (NOT Gmail password!)
 EMAIL_HOST_USER ='indokonacreditbazar@gmail.com'
 EMAIL_HOST_PASSWORD = 'ztqj aqcg sssc aolk'
+
+
+RAZORPAY_KEY_ID = "rzp_test_XXXXXXX"
+RAZORPAY_KEY_SECRET = "YOUR_SECRET_KEY"
+

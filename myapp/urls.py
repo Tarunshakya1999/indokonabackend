@@ -10,6 +10,15 @@ router.register(r'feedback',TestimonialFeedbackAPI)
 router.register(r'product',ProductAPI)
 router.register(r'cart', CartAPI)
 router.register('blogs', BlogViewSet)
+# New Urls
+router.register('products', ProductViewSet)
+router.register('orders', OrderViewSet)
+router.register('leads', LeadViewSet)
+router.register('wallets', WalletViewSet)
+router.register('commissions', CommissionViewSet)
+router.register('hotdeals', HotDealViewSet)
+router.register('dashboard', DashboardViewSet, basename='dashboard')
+
 
 
 urlpatterns = [

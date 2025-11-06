@@ -160,3 +160,79 @@ class BlogViewSet(viewsets.ModelViewSet):
 #     }
 
 #     return Response(data)
+
+
+
+
+
+
+
+# New Views.py 
+
+
+
+from rest_framework import viewsets, permissions
+from .models import Product, Order, Lead, Wallet, Commission, HotDeal
+from .serializers import ProductSerializer, OrderSerializer, LeadSerializer, WalletSerializer, CommissionSerializer, HotDealSerializer
+from rest_framework.decorators import action
+from rest_framework.response import Response
+
+
+class ProductViewSet(viewsets.ModelViewSet):
+   queryset = Product.objects.all().order_by('-created_at')
+   serializer_class = ProductSerializer
+   permission_classes = [permissions.IsAuthenticated]
+
+
+class OrderViewSet(viewsets.ModelViewSet):
+   queryset = Order.objects.all().order_by('-created_at')
+   serializer_class = OrderSerializer
+   permission_classes = [permissions.IsAuthenticated]
+
+
+class LeadViewSet(viewsets.ModelViewSet):
+   queryset = Lead.objects.all().order_by('-created_at')
+   serializer_class = LeadSerializer
+   permission_classes = [permissions.IsAuthenticated]
+
+
+class WalletViewSet(viewsets.ModelViewSet):
+  queryset = Wallet.objects.all()
+  serializer_class = WalletSerializer
+  permission_classes = [permissions.IsAuthenticated]
+
+
+class CommissionViewSet(viewsets.ModelViewSet):
+   queryset = Commission.objects.all()
+   serializer_class = CommissionSerializer
+   permission_classes = [permissions.IsAuthenticated]
+
+
+class HotDealViewSet(viewsets.ModelViewSet):
+    queryset = HotDeal.objects.all()
+    serializer_class = HotDealSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+# Example custom endpoint for dashboard stats
+from django.db.models import Sum, Count
+from rest_framework import status
+
+
+class DashboardViewSet(viewsets.ViewSet):
+   permission_classes = [permissions.IsAuthenticated]
+
+
+def list(self, request):
+
+   total_sales = Order.objects.filter(status='paid').aggregate(total=Sum('amount'))['total'] or 0
+   total_orders = Order.objects.count()
+   total_customers = User.objects.count()
+   top_products = Product.objects.all()[:5]
+   top_products_data = ProductSerializer(top_products, many=True).data
+   return Response({
+'total_sales': total_sales,
+'total_orders': total_orders,
+'total_customers': total_customers,
+'top_products': top_products_data
+})

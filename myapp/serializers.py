@@ -106,3 +106,61 @@ class BlogSerializer(serializers.ModelSerializer):
     class Meta:
      model = Blog
      fields = '__all__'
+
+
+
+# NEW SERIALIZERS
+
+
+from rest_framework import serializers
+from django.contrib.auth.models import User
+from .models import Profile, Product, Order, Lead, Wallet, Commission, HotDeal
+
+
+class UserSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = User
+    fields = ['id','username','email']
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    class Meta:
+     model = Profile
+     fields = '__all__'
+
+
+class ProductSerializer(serializers.ModelSerializer):
+    class Meta:
+     model = Product
+     fields = '__all__'
+
+
+class OrderSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = Order
+    fields = '__all__'
+
+
+class LeadSerializer(serializers.ModelSerializer):
+    class Meta:
+     model = Lead
+     fields = '__all__'
+
+
+class WalletSerializer(serializers.ModelSerializer):
+   class Meta:
+    model = Wallet
+    fields = '__all__'
+
+
+class CommissionSerializer(serializers.ModelSerializer):
+   class Meta:
+    model = Commission
+    fields = '__all__'
+
+
+class HotDealSerializer(serializers.ModelSerializer):
+  class Meta:
+   model = HotDeal
+   fields = '__all__'
