@@ -167,15 +167,13 @@ class HotDealSerializer(serializers.ModelSerializer):
 
 
 
-
-from rest_framework import serializers
-from django.contrib.auth.models import User
-
 class RegisterSerializer(serializers.ModelSerializer):
     role = serializers.ChoiceField(choices=[
-        ("main","Main Website"),("crm","CRM User"),("vendor","Vendor")
+        ("main","Main Website"),
+        ("crm","CRM User"),
+        ("vendor","Vendor")
     ], default="main")
-
+    
     password = serializers.CharField(write_only=True)
 
     class Meta:
@@ -186,7 +184,9 @@ class RegisterSerializer(serializers.ModelSerializer):
         role = validated_data.pop("role", "main")
         user = User.objects.create_user(**validated_data)
 
-        profile, created = Profile.objects.get_or_create(user=user)
+        # ✅ Profile already auto-created, so JUST update role
+        profile = Profile.objects.get(user=user)
         profile.role = role
         profile.save()
+
         return user
