@@ -213,26 +213,76 @@ class HotDealViewSet(viewsets.ModelViewSet):
     serializer_class = HotDealSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+# accounts/views.py
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+from rest_framework import status, permissions
+from django.contrib.auth import authenticate
+from rest_framework_simplejwt.tokens import RefreshToken
+from .serializers import RegisterSerializer
+from rest_framework_simplejwt.views import TokenRefreshView
 
-# Example custom endpoint for dashboard stats
-from django.db.models import Sum, Count
-from rest_framework import status
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def register_view(request):
+    """
+    Register user. Frontend passes: username, email, password, role
+    """
+    serializer = RegisterSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response({"message":"User registered"}, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class DashboardViewSet(viewsets.ViewSet):
-   permission_classes = [permissions.IsAuthenticated]
+@api_view(['POST'])
+@permission_classes([permissions.AllowAny])
+def role_login_view(request):
+    """
+    Single login endpoint. Expects: username, password, role
+    Returns access + refresh if credentials ok and user.profile.role == role
+    """
+    username = request.data.get("username")
+    password = request.data.get("password")
+    role = request.data.get("role")
+
+    if not username or not password or not role:
+        return Response({"error":"username, password and role are required"}, status=status.HTTP_400_BAD_REQUEST)
+
+    user = authenticate(username=username, password=password)
+    if user is None:
+        return Response({"error":"Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
+
+    # ensure profile exists and check role
+    profile = getattr(user, "profile", None)
+    if profile is None or profile.role != role:
+        return Response({"error":"Role mismatch or user not allowed for this panel"}, status=status.HTTP_403_FORBIDDEN)
+
+    refresh = RefreshToken.for_user(user)
+    access_token = str(refresh.access_token)
+    refresh_token = str(refresh)
+
+    return Response({
+        "access": access_token,
+        "refresh": refresh_token,
+        "username": user.username,
+        "role": profile.role
+    }, status=status.HTTP_200_OK)
 
 
-def list(self, request):
+# Example protected view for CRM
+from rest_framework.decorators import authentication_classes
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.permissions import IsAuthenticated
+from django.http import JsonResponse
 
-   total_sales = Order.objects.filter(status='paid').aggregate(total=Sum('amount'))['total'] or 0
-   total_orders = Order.objects.count()
-   total_customers = User.objects.count()
-   top_products = Product.objects.all()[:5]
-   top_products_data = ProductSerializer(top_products, many=True).data
-   return Response({
-'total_sales': total_sales,
-'total_orders': total_orders,
-'total_customers': total_customers,
-'top_products': top_products_data
-})
+@api_view(['GET'])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+def crm_dashboard(request):
+    # only allow if token claim role or DB profile role equals 'crm'
+    # best to check DB (more secure)
+    if request.user.profile.role != "crm":
+        return Response({"error":"Forbidden"}, status=status.HTTP_403_FORBIDDEN)
+    return Response({"msg":f"Welcome to CRM dashboard, {request.user.username}"})
+

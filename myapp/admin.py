@@ -13,13 +13,13 @@ admin.site.register(ContactMessage)
 admin.site.register(Blog)
 
 
+from django.contrib import admin
+from .models import Profile
 
-# ✅ Profile Admin
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'phone', 'is_reseller', 'kyc_submitted', 'payout_upi')
-    list_filter = ('is_reseller', 'kyc_submitted')
-    search_fields = ('user__username', 'phone', 'payout_upi')
+    list_display = ["user", "phone", "is_reseller", "kyc_submitted", "payout_upi", "role"]
+    list_filter = ["is_reseller", "kyc_submitted", "role"]
 
 
 # ✅ Wallet Admin
