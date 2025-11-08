@@ -168,14 +168,16 @@ class HotDealSerializer(serializers.ModelSerializer):
 
 
 
-
-# accounts/serializers.py
 from rest_framework import serializers
 from django.contrib.auth.models import User
 
 class RegisterSerializer(serializers.ModelSerializer):
-    role = serializers.ChoiceField(choices=[("main","Main Website"),("crm","CRM User"),("vendor","Vendor")], default="main")
+    role = serializers.ChoiceField(choices=[
+        ("main","Main Website"),("crm","CRM User"),("vendor","Vendor")
+    ], default="main")
+
     password = serializers.CharField(write_only=True)
+
     class Meta:
         model = User
         fields = ("username", "email", "password", "role")
@@ -183,8 +185,8 @@ class RegisterSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         role = validated_data.pop("role", "main")
         user = User.objects.create_user(**validated_data)
-        # ensure profile exists via signal then set role
-        user.profile.role = role
-        user.profile.save()
-        return user
 
+        profile, created = Profile.objects.get_or_create(user=user)
+        profile.role = role
+        profile.save()
+        return user
