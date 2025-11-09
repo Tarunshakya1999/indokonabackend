@@ -196,8 +196,6 @@ class HotDeal(models.Model):
   active = models.BooleanField(default=True)
 
 
-
-# models.py
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -212,14 +210,12 @@ class Profile(models.Model):
     ]
 
     ROLE_CHOICES = [
-        # Fintech roles
         ('Retailer', 'Retailer'),
         ('Distributor', 'Distributor'),
         ('Master Distributor', 'Master Distributor'),
         ('Super Distributor', 'Super Distributor'),
         ('White Label', 'White Label'),
 
-        # Store roles
         ('Basic Reseller', 'Basic Reseller'),
         ('Pro Reseller', 'Pro Reseller'),
         ('Gold Reseller', 'Gold Reseller'),
@@ -227,9 +223,8 @@ class Profile(models.Model):
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
-    service = models.CharField(max_length=50, choices=SERVICE_CHOICES,default=None,blank=True,null=True )
-    role = models.CharField(max_length=50, choices=ROLE_CHOICES,default=None,blank=True,null=True)
+    service = models.CharField(max_length=50, choices=SERVICE_CHOICES, null=True, blank=True)
+    role = models.CharField(max_length=50, choices=ROLE_CHOICES, null=True, blank=True)
 
-    def _str_(self):
-        return f"{self.user.username} - {self.role}"
-
+    def __str__(self):
+        return f"{self.user.username} - {self.service} - {self.role}"
