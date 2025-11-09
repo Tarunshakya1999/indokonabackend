@@ -227,8 +227,8 @@ class Profile(models.Model):
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
-    service = models.CharField(max_length=50, choices=SERVICE_CHOICES)
-    role = models.CharField(max_length=50, choices=ROLE_CHOICES)
+    service = models.CharField(max_length=50, choices=SERVICE_CHOICES,default=None,blank=True,null=True )
+    role = models.CharField(max_length=50, choices=ROLE_CHOICES,default=None,blank=True,null=True)
 
     def _str_(self):
         return f"{self.user.username} - {self.role}"
