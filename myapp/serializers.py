@@ -89,8 +89,6 @@ class CartSerializer(serializers.ModelSerializer):
 
 
 
-
-
 class ContactMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContactMessage
@@ -166,27 +164,3 @@ class HotDealSerializer(serializers.ModelSerializer):
    fields = '__all__'
 
 
-
-class RegisterSerializer(serializers.ModelSerializer):
-    role = serializers.ChoiceField(choices=[
-        ("main","Main Website"),
-        ("crm","CRM User"),
-        ("vendor","Vendor")
-    ], default="main")
-    
-    password = serializers.CharField(write_only=True)
-
-    class Meta:
-        model = User
-        fields = ("username", "email", "password", "role")
-
-    # def create(self, validated_data):
-    #     role = validated_data.pop("role", "main")
-    #     user = User.objects.create_user(**validated_data)
-
-    #     # ✅ Profile already auto-created, so JUST update role
-    #     profile = Profile.objects.get(user=user)
-    #     profile.role = role
-    #     profile.save()
-
-    #     return user

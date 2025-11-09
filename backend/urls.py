@@ -37,11 +37,7 @@ urlpatterns = [
     path("api/contact/", contact_view, name="contact"),
     # path("api/share/product/<int:id>/", product_share_api, name="product_share_api"),
 
-    path("register2/", register_view, name="register"),
-    path("api/mylogin/", role_login_view, name="role_login"),
-    path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
-    path("crm/dashboard/", crm_dashboard, name="crm_dashboard"),
-
+    
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
