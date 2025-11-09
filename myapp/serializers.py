@@ -180,13 +180,13 @@ class RegisterSerializer(serializers.ModelSerializer):
         model = User
         fields = ("username", "email", "password", "role")
 
-    def create(self, validated_data):
-        role = validated_data.pop("role", "main")
-        user = User.objects.create_user(**validated_data)
+    # def create(self, validated_data):
+    #     role = validated_data.pop("role", "main")
+    #     user = User.objects.create_user(**validated_data)
 
-        # ✅ Profile already auto-created, so JUST update role
-        profile = Profile.objects.get(user=user)
-        profile.role = role
-        profile.save()
+    #     # ✅ Profile already auto-created, so JUST update role
+    #     profile = Profile.objects.get(user=user)
+    #     profile.role = role
+    #     profile.save()
 
-        return user
+    #     return user
