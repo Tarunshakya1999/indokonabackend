@@ -195,3 +195,41 @@ class HotDeal(models.Model):
   end = models.DateTimeField()
   active = models.BooleanField(default=True)
 
+
+
+# models.py
+from django.db import models
+from django.contrib.auth.models import User
+
+class Profile(models.Model):
+    SERVICE_CHOICES = [
+        ('Fintech', 'Indokona Fintech'),
+        ('Suit', 'Indokona Suite'),
+        ('SaaS', 'Indokona SaaS'),
+        ('M2M', 'Indokona M2M'),
+        ('Store', 'Indokona Digital Store'),
+        ('Acadmy', 'Indokona Academy'),
+    ]
+
+    ROLE_CHOICES = [
+        # Fintech roles
+        ('Retailer', 'Retailer'),
+        ('Distributor', 'Distributor'),
+        ('Master Distributor', 'Master Distributor'),
+        ('Super Distributor', 'Super Distributor'),
+        ('White Label', 'White Label'),
+
+        # Store roles
+        ('Basic Reseller', 'Basic Reseller'),
+        ('Pro Reseller', 'Pro Reseller'),
+        ('Gold Reseller', 'Gold Reseller'),
+        ('Diamond Reseller', 'Diamond Reseller'),
+    ]
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    service = models.CharField(max_length=50, choices=SERVICE_CHOICES)
+    role = models.CharField(max_length=50, choices=ROLE_CHOICES)
+
+    def _str_(self):
+        return f"{self.user.username} - {self.role}"
+
