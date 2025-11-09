@@ -216,3 +216,13 @@ class HotDealViewSet(viewsets.ModelViewSet):
     queryset = HotDeal.objects.all()
     serializer_class = HotDealSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+
+
+
+
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializers import CustomTokenObtainPairSerializer
+
+class CustomLoginView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer

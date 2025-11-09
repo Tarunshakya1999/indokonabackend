@@ -33,6 +33,7 @@ urlpatterns = [
     path('api/register/', RegisterView.as_view(), name='register'),   
    # path('get-role/', get_user_role),
     path('login/',TokenObtainPairView.as_view(),name="login"),
+    path('login2/', CustomLoginView.as_view(), name="login2"),
     path('api/token/referesh/',TokenRefreshView.as_view(),name="referesh3"),
     path("api/contact/", contact_view, name="contact"),
     # path("api/share/product/<int:id>/", product_share_api, name="product_share_api"),

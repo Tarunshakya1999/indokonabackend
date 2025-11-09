@@ -167,3 +167,27 @@ class HotDealSerializer(serializers.ModelSerializer):
    fields = '__all__'
 
 
+
+
+
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        
+        # Add custom claims
+        token['service'] = user.profile.service
+        token['role'] = user.profile.role
+        
+        return token
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+
+        data['service'] = self.user.profile.service
+        data['role'] = self.user.profile.role
+
+        return data
+
