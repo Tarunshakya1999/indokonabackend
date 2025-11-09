@@ -15,14 +15,16 @@ class PDFSerializer(serializers.ModelSerializer):
     class Meta:
         model = PDF
         fields = '__all__'
+
+# serializers.py
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import Profile
 
 class UserRegisterSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(write_only=True)
-    service = serializers.ChoiceField(choices=Profile.SERVICE_CHOICES)
-    role = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+    service = serializers.ChoiceField(choices=Profile.SERVICE_CHOICES, required=True)
+    role = serializers.ChoiceField(choices=Profile.ROLE_CHOICES, required=True)
 
     class Meta:
         model = User
@@ -32,29 +34,24 @@ class UserRegisterSerializer(serializers.ModelSerializer):
     def validate(self, data):
         if data['password'] != data['password2']:
             raise serializers.ValidationError({"password": "Passwords do not match."})
-
-        service = data.get('service')
-        role = data.get('role')
-
-        # ✅ Role required only for Fintech & Store
-        if service in ['Fintech', 'Store'] and not role:
-            raise serializers.ValidationError({"role": "Role required for selected service."})
-
+        if User.objects.filter(username=data['username']).exists():
+            raise serializers.ValidationError({"username": "Username already exists."})
+        if User.objects.filter(email=data['email']).exists():
+            raise serializers.ValidationError({"email": "Email already exists."})
         return data
 
     def create(self, validated_data):
         password = validated_data.pop('password')
-        validated_data.pop('password2')
+        password2 = validated_data.pop('password2')
         service = validated_data.pop('service')
-        role = validated_data.pop('role', None)
+        role = validated_data.pop('role')
 
         user = User.objects.create_user(**validated_data, password=password)
-        Profile.objects.create(
-            user=user,
-            service=service,
-            role=role
-        )
+        user.profile.service = service
+        user.profile.role = role
+        user.profile.save()
         return user
+
 from rest_framework import serializers
 from .models import Plan, Testimonial, FAQ
 
