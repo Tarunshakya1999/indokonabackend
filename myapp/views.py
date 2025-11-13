@@ -213,26 +213,3 @@ class HotDealViewSet(viewsets.ModelViewSet):
     serializer_class = HotDealSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-
-# Example custom endpoint for dashboard stats
-from django.db.models import Sum, Count
-from rest_framework import status
-
-
-class DashboardViewSet(viewsets.ViewSet):
-   permission_classes = [permissions.IsAuthenticated]
-
-
-def list(self, request):
-
-   total_sales = Order.objects.filter(status='paid').aggregate(total=Sum('amount'))['total'] or 0
-   total_orders = Order.objects.count()
-   total_customers = User.objects.count()
-   top_products = Product.objects.all()[:5]
-   top_products_data = ProductSerializer(top_products, many=True).data
-   return Response({
-'total_sales': total_sales,
-'total_orders': total_orders,
-'total_customers': total_customers,
-'top_products': top_products_data
-})
