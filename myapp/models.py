@@ -248,7 +248,7 @@ class MyReels(models.Model):
 class MyPosts(models.Model):
     author = models.TextField()
     title = models.CharField( max_length=50)
-    body = models.TextField( upload_to="reels")
+    image = models.FileField(upload_to="myposts")
     image= models.ImageField(upload_to="music")
     likes = models.IntegerField()
     time = models.TimeField(auto_now=False, auto_now_add=False)
