@@ -25,6 +25,11 @@ class PlansAPI(viewsets.ModelViewSet):
     serializer_class = PlanSerializer
 
 
+# views.py
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from .serializers import UserRegisterSerializer
 
 class RegisterView(APIView):
     def post(self, request):
@@ -33,7 +38,6 @@ class RegisterView(APIView):
             serializer.save()
             return Response({"msg": "User registered successfully"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 # from rest_framework import viewsets
@@ -212,23 +216,15 @@ class HotDealViewSet(viewsets.ModelViewSet):
     queryset = HotDeal.objects.all()
     serializer_class = HotDealSerializer
     permission_classes = [permissions.IsAuthenticated]
-
-
-
 from rest_framework import viewsets
-from .models import PublicProfile
-from .serializers import PublicProfileSerializer
+from .models import PublicProfile, MyReels
+from .serializers import PublicProfileSerializer, MyReelsSerializer
+
 
 class PublicProfileViewSet(viewsets.ModelViewSet):
     queryset = PublicProfile.objects.all()
     serializer_class = PublicProfileSerializer
 
-
-
-
-from rest_framework import viewsets
-from .models import MyReels
-from .serializers import MyReelsSerializer
 
 class MyReelsViewSet(viewsets.ModelViewSet):
     queryset = MyReels.objects.all().order_by('-id')

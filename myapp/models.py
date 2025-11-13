@@ -196,27 +196,68 @@ class HotDeal(models.Model):
   active = models.BooleanField(default=True)
 
 
+from django.db import models
+from django.contrib.auth.models import User
 
+
+# ✅ Profile Model (Role + Service)
+class Profile(models.Model):
+    SERVICE_CHOICES = [
+        ('Fintech', 'Indokona Fintech'),
+        ('Suit', 'Indokona Suite'),
+        ('SaaS', 'Indokona SaaS'),
+        ('M2M', 'Indokona M2M'),
+        ('Store', 'Indokona Digital Store'),
+        ('Acadmy', 'Indokona Academy'),
+    ]
+
+    ROLE_CHOICES = [
+        # Fintech roles
+        ('Retailer', 'Retailer'),
+        ('Distributor', 'Distributor'),
+        ('Master Distributor', 'Master Distributor'),
+        ('Super Distributor', 'Super Distributor'),
+        ('White Label', 'White Label'),
+
+        # Store roles
+        ('Basic Reseller', 'Basic Reseller'),
+        ('Pro Reseller', 'Pro Reseller'),
+        ('Gold Reseller', 'Gold Reseller'),
+        ('Diamond Reseller', 'Diamond Reseller'),
+    ]
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    service = models.CharField(max_length=50, choices=SERVICE_CHOICES, default=None, blank=True, null=True)
+    role = models.CharField(max_length=50, choices=ROLE_CHOICES, default=None, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.role}"
+
+
+# ✅ Reels Model
 class MyReels(models.Model):
     author = models.TextField()
-    caption = models.CharField( max_length=50)
-    src = models.FileField( upload_to="reels")
+    caption = models.CharField(max_length=50)
+    src = models.FileField(upload_to="reels")
     music = models.FileField(upload_to="music", blank=True, null=True)
+
     def __str__(self):
         return self.author
-    
 
 
+# ✅ Posts Model
 class MyPosts(models.Model):
     author = models.TextField()
-    title = models.CharField( max_length=50)
-    image = models.FileField(upload_to="myposts")
-    image= models.ImageField(upload_to="music")
-    likes = models.IntegerField()
+    title = models.CharField(max_length=50)
+    image = models.ImageField(upload_to="myposts")
+    likes = models.IntegerField(default=0)
     time = models.TimeField(auto_now=False, auto_now_add=False)
+
     def __str__(self):
         return self.author
-    
+
+
+# ✅ Public Profile Model
 class PublicProfile(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField(max_length=254, unique=True)
@@ -226,17 +267,8 @@ class PublicProfile(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     pincode = models.IntegerField()
     is_varied = models.BooleanField(default=False)
-    aadhar_number = models.CharField(max_length=20, blank=False, null=False , unique=True)
+    aadhar_number = models.CharField(max_length=20, blank=False, null=False, unique=True)
     aadhar_card_pic = models.FileField(upload_to="aadhar/", blank=False, null=False)
 
     def __str__(self):
         return self.name
-
-    
-
-   
-
-
-
-
-

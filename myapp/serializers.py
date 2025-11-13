@@ -15,39 +15,54 @@ class PDFSerializer(serializers.ModelSerializer):
     class Meta:
         model = PDF
         fields = '__all__'
+# serializers.py
+from rest_framework import serializers
+from django.contrib.auth.models import User
+from .models import Profile
 
 class UserRegisterSerializer(serializers.ModelSerializer):
-    password2 = serializers.CharField(write_only=True, style={'input_type': 'password'})
-    role = serializers.ChoiceField(choices=ROLE_CHOICES, required=True)
+    password2 = serializers.CharField(write_only=True)
+    service = serializers.ChoiceField(choices=Profile.SERVICE_CHOICES, required=True)
+    role = serializers.CharField(required=False, allow_blank=True, allow_null=True)  
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password', 'password2', 'role']
+        fields = ['username', 'email', 'password', 'password2', 'service', 'role']
         extra_kwargs = {'password': {'write_only': True}}
 
     def validate(self, data):
         if data['password'] != data['password2']:
             raise serializers.ValidationError({"password": "Passwords do not match."})
+
         if User.objects.filter(username=data['username']).exists():
             raise serializers.ValidationError({"username": "Username already exists."})
+
         if User.objects.filter(email=data['email']).exists():
             raise serializers.ValidationError({"email": "Email already exists."})
+
+        service = data.get('service')
+        role = data.get('role')
+
+        # ✅ Make role mandatory only for Fintech & Store
+        services_require_role = ['Fintech', 'Store']
+        if service in services_require_role and not role:
+            raise serializers.ValidationError({"role": "Role is required for this service."})
+
         return data
 
     def create(self, validated_data):
-        role = validated_data.pop('role')
-        user = User.objects.create_user(
-            username=validated_data['username'],
-            email=validated_data['email'],
-            password=validated_data['password']
-        )
-        # Profile auto-created via signal; update role
-        # user.profile.role = role
-        # user.profile.save()
+        password = validated_data.pop('password')
+        password2 = validated_data.pop('password2')
+        service = validated_data.pop('service')
+        role = validated_data.pop('role', None)  # ✅ handle optional role
+
+        user = User.objects.create_user(**validated_data, password=password)
+
+        user.profile.service = service
+        user.profile.role = role if role else None  # ✅ save only if available
+        user.profile.save()
+
         return user
-
-
-
 
 from rest_framework import serializers
 from .models import Plan, Testimonial, FAQ
@@ -86,8 +101,6 @@ class CartSerializer(serializers.ModelSerializer):
         model = Cart
         fields = ['id', 'user', 'product', 'product_id', 'quantity']
         read_only_fields = ['user']
-
-
 
 
 
@@ -166,10 +179,11 @@ class HotDealSerializer(serializers.ModelSerializer):
    fields = '__all__'
 
 
-
 from rest_framework import serializers
-from .models import PublicProfile
+from .models import PublicProfile, MyReels
 
+
+# ✅ Public Profile Serializer
 class PublicProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = PublicProfile
@@ -190,12 +204,9 @@ class PublicProfileSerializer(serializers.ModelSerializer):
         if PublicProfile.objects.filter(aadhar_number=value).exists():
             raise serializers.ValidationError("This Aadhar number already exists. Please use a different one.")
         return value
-    
 
 
-from rest_framework import serializers
-from .models import MyReels
-
+# ✅ My Reels Serializer
 class MyReelsSerializer(serializers.ModelSerializer):
     class Meta:
         model = MyReels

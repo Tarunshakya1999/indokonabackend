@@ -14,14 +14,6 @@ admin.site.register(Blog)
 
 
 
-# ✅ Profile Admin
-@admin.register(Profile)
-class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'phone', 'is_reseller', 'kyc_submitted', 'payout_upi')
-    list_filter = ('is_reseller', 'kyc_submitted')
-    search_fields = ('user__username', 'phone', 'payout_upi')
-
-
 # ✅ Wallet Admin
 @admin.register(Wallet)
 class WalletAdmin(admin.ModelAdmin):
@@ -87,6 +79,4 @@ class PublicProfileAdmin(admin.ModelAdmin):
     list_filter = ("is_varied", "created_at")
     search_fields = ("name", "email", "phone", "aadhar_number")
     readonly_fields = ("created_at",)
-
-    # admin me editable option
     list_editable = ("is_varied",)
