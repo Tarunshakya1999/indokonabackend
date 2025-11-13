@@ -23,7 +23,7 @@ from .models import Profile
 class UserRegisterSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(write_only=True)
     service = serializers.ChoiceField(choices=Profile.SERVICE_CHOICES, required=True)
-    role = serializers.CharField(required=False, allow_blank=True, allow_null=True)  # ✅ role optional
+    role = serializers.CharField(required=False, allow_blank=True, allow_null=True)  
 
     class Meta:
         model = User
@@ -203,3 +203,14 @@ class HotDealSerializer(serializers.ModelSerializer):
 
 #         return data
 
+
+
+
+from rest_framework import serializers
+from .models import PublicProfile
+
+class PublicProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PublicProfile
+        fields = '__all__'
+        read_only_fields = ['is_verified', 'created_at']  # user can't modify these

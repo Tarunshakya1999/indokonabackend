@@ -226,3 +226,12 @@ class HotDealViewSet(viewsets.ModelViewSet):
 
 # class CustomLoginView(TokenObtainPairView):
 #     serializer_class = CustomTokenObtainPairSerializer
+
+
+from rest_framework import viewsets
+from .models import PublicProfile
+from .serializers import PublicProfileSerializer
+
+class PublicProfileViewSet(viewsets.ModelViewSet):
+    queryset = PublicProfile.objects.all()
+    serializer_class = PublicProfileSerializer

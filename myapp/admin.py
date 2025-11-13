@@ -68,3 +68,17 @@ class HotDealAdmin(admin.ModelAdmin):
     list_filter = ('active',)
     search_fields = ('product__title',)
 
+
+
+from django.contrib import admin
+from .models import PublicProfile
+
+@admin.register(PublicProfile)
+class PublicProfileAdmin(admin.ModelAdmin):
+    list_display = ("name", "email", "phone", "pincode", "is_varied", "created_at")
+    list_filter = ("is_varied", "created_at")
+    search_fields = ("name", "email", "phone", "aadhar_number")
+    readonly_fields = ("created_at",)
+
+    # admin me editable option
+    list_editable = ("is_varied",)

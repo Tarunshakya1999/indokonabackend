@@ -17,6 +17,7 @@ router.register('leads', LeadViewSet)
 router.register('wallets', WalletViewSet)
 router.register('commissions', CommissionViewSet)
 router.register('hotdeals', HotDealViewSet)
+router.register('userprofiles', PublicProfileViewSet, basename='profile')
 
 
 
