@@ -229,40 +229,12 @@ class PublicProfileSerializer(serializers.ModelSerializer):
         return value
     
 
+
 from rest_framework import serializers
-from .models import MyReels, Comment
-from django.contrib.auth.models import User
-
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'username']
-
-class CommentSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
-    replies = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Comment
-        fields = ['id', 'user', 'text', 'created_at', 'parent', 'replies']
-
-    def get_replies(self, obj):
-        return CommentSerializer(obj.replies.all(), many=True).data
+from .models import MyReels
 
 class MyReelsSerializer(serializers.ModelSerializer):
-    likes_count = serializers.SerializerMethodField()
-    comments = CommentSerializer(many=True, read_only=True)
-    liked_by_user = serializers.SerializerMethodField()
-
     class Meta:
         model = MyReels
         fields = '__all__'
 
-    def get_likes_count(self, obj):
-        return obj.likes.count()
-
-    def get_liked_by_user(self, obj):
-        user = self.context['request'].user
-        if user.is_authenticated:
-            return user in obj.likes.all()
-        return False

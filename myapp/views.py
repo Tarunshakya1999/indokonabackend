@@ -238,45 +238,12 @@ class PublicProfileViewSet(viewsets.ModelViewSet):
 
 
 
-from rest_framework import viewsets, permissions
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from .models import MyReels, Comment
-from .serializers import MyReelsSerializer, CommentSerializer
+
+from rest_framework import viewsets
+from .models import MyReels
+from .serializers import MyReelsSerializer
 
 class MyReelsViewSet(viewsets.ModelViewSet):
     queryset = MyReels.objects.all().order_by('-id')
     serializer_class = MyReelsSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-    def get_serializer_context(self):
-        context = super().get_serializer_context()
-        context.update({"request": self.request})
-        return context
-
-    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated])
-    def toggle_like(self, request, pk=None):
-        reel = self.get_object()
-        user = request.user
-        if user in reel.likes.all():
-            reel.likes.remove(user)
-            return Response({'liked': False, 'likes_count': reel.likes.count()})
-        else:
-            reel.likes.add(user)
-            return Response({'liked': True, 'likes_count': reel.likes.count()})
-
-    @action(detail=True, methods=['post'], permission_classes=[permissions.IsAuthenticated])
-    def add_comment(self, request, pk=None):
-        reel = self.get_object()
-        text = request.data.get('text')
-        parent_id = request.data.get('parent')
-        parent = Comment.objects.filter(id=parent_id).first() if parent_id else None
-        comment = Comment.objects.create(reel=reel, user=request.user, text=text, parent=parent)
-        return Response(CommentSerializer(comment).data)
-
-    @action(detail=True, methods=['delete'], permission_classes=[permissions.IsAuthenticated])
-    def delete_comment(self, request, pk=None):
-        cid = request.data.get('comment_id')
-        comment = Comment.objects.get(id=cid, user=request.user)
-        comment.delete()
-        return Response({'deleted': True})
