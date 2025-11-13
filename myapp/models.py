@@ -239,7 +239,7 @@ class MyReels(models.Model):
     author = models.TextField()
     caption = models.CharField( max_length=50)
     src = models.FileField( upload_to="reels")
-    music = models.FileField(upload_to="music")
+    music = models.FileField(upload_to="music", blank=True, null=True)
     def __str__(self):
         return self.author
     
