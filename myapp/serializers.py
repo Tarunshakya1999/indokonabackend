@@ -164,3 +164,39 @@ class HotDealSerializer(serializers.ModelSerializer):
   class Meta:
    model = HotDeal
    fields = '__all__'
+
+
+
+from rest_framework import serializers
+from .models import PublicProfile
+
+class PublicProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PublicProfile
+        fields = '__all__'
+        read_only_fields = ['is_varied', 'created_at']
+
+    def validate_email(self, value):
+        if PublicProfile.objects.filter(email=value).exists():
+            raise serializers.ValidationError("This email already exists. Please use a different one.")
+        return value
+
+    def validate_phone(self, value):
+        if PublicProfile.objects.filter(phone=value).exists():
+            raise serializers.ValidationError("This phone number already exists. Please use a different one.")
+        return value
+
+    def validate_aadhar_number(self, value):
+        if PublicProfile.objects.filter(aadhar_number=value).exists():
+            raise serializers.ValidationError("This Aadhar number already exists. Please use a different one.")
+        return value
+    
+
+
+from rest_framework import serializers
+from .models import MyReels
+
+class MyReelsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MyReels
+        fields = '__all__'

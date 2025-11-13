@@ -9,15 +9,17 @@ router.register(r'plans',PlansAPI)
 router.register(r'feedback',TestimonialFeedbackAPI)
 router.register(r'product',ProductAPI)
 router.register(r'cart', CartAPI)
-router.register('blogs', BlogViewSet)
+router.register(r'blogs', BlogViewSet)
 # New Urls
-router.register('products', ProductViewSet)
-router.register('orders', OrderViewSet)
-router.register('leads', LeadViewSet)
-router.register('wallets', WalletViewSet)
-router.register('commissions', CommissionViewSet)
-router.register('hotdeals', HotDealViewSet)
-router.register('dashboard', DashboardViewSet, basename='dashboard')
+router.register(r'products', ProductViewSet)
+router.register(r'orders', OrderViewSet)
+router.register(r'leads', LeadViewSet)
+router.register(r'wallets', WalletViewSet)
+router.register(r'commissions', CommissionViewSet)
+router.register(r'hotdeals', HotDealViewSet)
+router.register(r'userprofiles', PublicProfileViewSet)
+router.register(r'myreels', MyReelsViewSet)
+
 
 
 

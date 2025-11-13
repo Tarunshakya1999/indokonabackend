@@ -197,5 +197,46 @@ class HotDeal(models.Model):
 
 
 
+class MyReels(models.Model):
+    author = models.TextField()
+    caption = models.CharField( max_length=50)
+    src = models.FileField( upload_to="reels")
+    music = models.FileField(upload_to="music", blank=True, null=True)
+    def __str__(self):
+        return self.author
+    
+
+
+class MyPosts(models.Model):
+    author = models.TextField()
+    title = models.CharField( max_length=50)
+    image = models.FileField(upload_to="myposts")
+    image= models.ImageField(upload_to="music")
+    likes = models.IntegerField()
+    time = models.TimeField(auto_now=False, auto_now_add=False)
+    def __str__(self):
+        return self.author
+    
+class PublicProfile(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField(max_length=254, unique=True)
+    phone = models.CharField(max_length=15)
+    address = models.CharField(max_length=255)
+    userpic = models.ImageField(upload_to="public/")
+    created_at = models.DateTimeField(auto_now_add=True)
+    pincode = models.IntegerField()
+    is_varied = models.BooleanField(default=False)
+    aadhar_number = models.CharField(max_length=20, blank=False, null=False , unique=True)
+    aadhar_card_pic = models.FileField(upload_to="aadhar/", blank=False, null=False)
+
+    def __str__(self):
+        return self.name
+
+    
+
+   
+
+
+
 
 

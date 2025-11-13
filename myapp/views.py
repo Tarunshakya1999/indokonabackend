@@ -213,3 +213,23 @@ class HotDealViewSet(viewsets.ModelViewSet):
     serializer_class = HotDealSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+
+
+from rest_framework import viewsets
+from .models import PublicProfile
+from .serializers import PublicProfileSerializer
+
+class PublicProfileViewSet(viewsets.ModelViewSet):
+    queryset = PublicProfile.objects.all()
+    serializer_class = PublicProfileSerializer
+
+
+
+
+from rest_framework import viewsets
+from .models import MyReels
+from .serializers import MyReelsSerializer
+
+class MyReelsViewSet(viewsets.ModelViewSet):
+    queryset = MyReels.objects.all().order_by('-id')
+    serializer_class = MyReelsSerializer
