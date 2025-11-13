@@ -234,15 +234,29 @@ class Profile(models.Model):
         return f"{self.user.username} - {self.role}"
 
 
+from django.contrib.auth.models import User
+from django.db import models
 
 class MyReels(models.Model):
     author = models.TextField()
-    caption = models.CharField( max_length=50)
-    src = models.FileField( upload_to="reels")
+    caption = models.CharField(max_length=50)
+    src = models.FileField(upload_to="reels")
     music = models.FileField(upload_to="music", blank=True, null=True)
+    likes = models.ManyToManyField(User, related_name="liked_reels", blank=True)
+
     def __str__(self):
         return self.author
-    
+
+class Comment(models.Model):
+    reel = models.ForeignKey(MyReels, on_delete=models.CASCADE, related_name="comments")
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    text = models.TextField()
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name="replies")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username}: {self.text[:30]}"
+
 
 
 class MyPosts(models.Model):
