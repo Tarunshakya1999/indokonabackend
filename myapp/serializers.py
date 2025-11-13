@@ -236,7 +236,7 @@ from django.contrib.auth.models import User
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "username"]
+        fields = ['id', 'username']
 
 class CommentSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
@@ -244,20 +244,25 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ["id", "user", "text", "parent", "replies", "created_at"]
+        fields = ['id', 'user', 'text', 'created_at', 'parent', 'replies']
 
     def get_replies(self, obj):
         return CommentSerializer(obj.replies.all(), many=True).data
 
 class MyReelsSerializer(serializers.ModelSerializer):
+    likes_count = serializers.SerializerMethodField()
     comments = CommentSerializer(many=True, read_only=True)
-    likes_count = serializers.IntegerField(source="likes.count", read_only=True)
-    is_liked = serializers.SerializerMethodField()
+    liked_by_user = serializers.SerializerMethodField()
 
     class Meta:
         model = MyReels
-        fields = ["id", "author", "caption", "src", "music", "likes_count", "is_liked", "comments"]
+        fields = '__all__'
 
-    def get_is_liked(self, obj):
-        user = self.context["request"].user
-        return user in obj.likes.all() if user.is_authenticated else False
+    def get_likes_count(self, obj):
+        return obj.likes.count()
+
+    def get_liked_by_user(self, obj):
+        user = self.context['request'].user
+        if user.is_authenticated:
+            return user in obj.likes.all()
+        return False
