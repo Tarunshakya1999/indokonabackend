@@ -227,3 +227,14 @@ class PublicProfileSerializer(serializers.ModelSerializer):
         if PublicProfile.objects.filter(aadhar_number=value).exists():
             raise serializers.ValidationError("This Aadhar number already exists. Please use a different one.")
         return value
+    
+
+
+from rest_framework import serializers
+from .models import MyReels
+
+class MyReelsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MyReels
+        fields = '__all__'
+

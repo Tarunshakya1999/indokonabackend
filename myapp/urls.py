@@ -18,6 +18,7 @@ router.register(r'wallets', WalletViewSet)
 router.register(r'commissions', CommissionViewSet)
 router.register(r'hotdeals', HotDealViewSet)
 router.register(r'userprofiles', PublicProfileViewSet)
+router.register(r'myreels', MyReelsViewSet)
 
 
 
