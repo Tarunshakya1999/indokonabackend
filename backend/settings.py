@@ -140,3 +140,15 @@ RAZORPAY_KEY_SECRET = "YOUR_SECRET_KEY"
 
 
 
+CORS_ALLOWED_ORIGINS = [
+    "https://indokonafrontend.vercel.app",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://indokonafrontend.vercel.app",
+]
+
+CORS_ALLOW_CREDENTIALS = True
+
+
+
