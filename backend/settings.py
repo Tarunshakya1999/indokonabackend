@@ -138,3 +138,15 @@ EMAIL_HOST_PASSWORD = "ztqj aqcg sssc aolk"
 RAZORPAY_KEY_ID = "rzp_test_XXXXXXX"
 RAZORPAY_KEY_SECRET = "YOUR_SECRET_KEY"
 
+
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}

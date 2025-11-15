@@ -200,3 +200,16 @@ class MyReelsSerializer(serializers.ModelSerializer):
     class Meta:
         model = MyReels
         fields = '__all__'
+
+
+
+
+
+
+from rest_framework import serializers
+from .models import PublicProfile, ProfileAssets
+
+class ProfileAssetsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProfileAssets
+        fields = ['certificate', 'id_card', 'visiting_card', 'created_at']

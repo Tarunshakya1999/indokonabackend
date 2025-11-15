@@ -216,16 +216,46 @@ class HotDealViewSet(viewsets.ModelViewSet):
     queryset = HotDeal.objects.all()
     serializer_class = HotDealSerializer
     permission_classes = [permissions.IsAuthenticated]
-from rest_framework import viewsets
-from .models import PublicProfile, MyReels
-from .serializers import PublicProfileSerializer, MyReelsSerializer
+# myapp/views.py
+from rest_framework import viewsets, permissions
+from .models import PublicProfile
+from .serializers import PublicProfileSerializer
+from rest_framework.response import Response
+from rest_framework.decorators import action
 
+class IsOwner(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        # requires that PublicProfile.user is set to request.user during creation
+        return obj.user == request.user
 
 class PublicProfileViewSet(viewsets.ModelViewSet):
     queryset = PublicProfile.objects.all()
     serializer_class = PublicProfileSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        # attach currently logged-in user
+        serializer.save(user=self.request.user)
+
+    def get_queryset(self):
+        # restrict list to current user's profile(s)
+        user = self.request.user
+        return PublicProfile.objects.filter(user=user)
+
+    @action(detail=True, methods=['get'], permission_classes=[permissions.IsAuthenticated, IsOwner])
+    def assets(self, request, pk=None):
+        profile = self.get_object()
+        assets = getattr(profile, "assets", None)
+        if not assets:
+            return Response({"detail":"No assets yet"}, status=404)
+        from .serializers import ProfileAssetsSerializer
+        return Response(ProfileAssetsSerializer(assets).data)
 
 
 class MyReelsViewSet(viewsets.ModelViewSet):
     queryset = MyReels.objects.all().order_by('-id')
     serializer_class = MyReelsSerializer
+
+
+
+

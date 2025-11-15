@@ -257,6 +257,17 @@ class MyPosts(models.Model):
         return self.author
 
 
+from django.db import models
+from django.conf import settings
+import os
+from uuid import uuid4
+
+def user_public_upload_to(instance, filename):
+    ext = filename.split('.')[-1]
+    fname = f"{uuid4().hex}.{ext}"
+    return os.path.join("public_assets", str(instance.profile.id), fname)
+
+
 # ✅ Public Profile Model
 class PublicProfile(models.Model):
     name = models.CharField(max_length=100)
@@ -273,3 +284,16 @@ class PublicProfile(models.Model):
 
     def __str__(self):
         return self.name
+
+
+
+
+class ProfileAssets(models.Model):
+    profile = models.OneToOneField(PublicProfile, on_delete=models.CASCADE, related_name="assets")
+    certificate = models.FileField(upload_to=user_public_upload_to, null=True, blank=True)  # PDF
+    id_card = models.ImageField(upload_to=user_public_upload_to, null=True, blank=True)     # PNG
+    visiting_card = models.ImageField(upload_to=user_public_upload_to, null=True, blank=True) # PNG
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Assets for {self.profile}"
