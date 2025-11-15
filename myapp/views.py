@@ -13,6 +13,8 @@ from myapp.serializers import UserRegisterSerializer
 class HeroViewSet(viewsets.ModelViewSet):
     queryset = Hero.objects.all()
     serializer_class = HeroSerializer
+    permission_classes = [AllowAny]
+
 
 
 class PDFAPI(viewsets.ModelViewSet):
