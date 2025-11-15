@@ -3,6 +3,8 @@ from .models import *
 from .serializers import *
 from django.core.mail import send_mail
 from django.views.decorators.csrf import csrf_exempt
+from rest_framework.permissions import AllowAny
+
 
 
 from rest_framework.views import APIView
@@ -218,6 +220,7 @@ class HotDealViewSet(viewsets.ModelViewSet):
     queryset = HotDeal.objects.all()
     serializer_class = HotDealSerializer
     permission_classes = [permissions.IsAuthenticated]
+
 # myapp/views.py
 from rest_framework import viewsets, permissions
 from .models import PublicProfile
