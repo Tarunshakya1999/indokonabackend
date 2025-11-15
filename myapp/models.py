@@ -266,6 +266,7 @@ class PublicProfile(models.Model):
     userpic = models.ImageField(upload_to="public/")
     created_at = models.DateTimeField(auto_now_add=True)
     pincode = models.IntegerField()
+    dob = models.DateField()
     is_varied = models.BooleanField(default=False)
     aadhar_number = models.CharField(max_length=20, blank=False, null=False, unique=True)
     aadhar_card_pic = models.FileField(upload_to="aadhar/", blank=False, null=False)
