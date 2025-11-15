@@ -177,7 +177,7 @@ class PublicProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = PublicProfile
         fields = '__all__'
-        read_only_fields = ['is_varied', 'created_at']
+        read_only_fields = ['is_varied', 'created_at','user']
 
     def validate_email(self, value):
         if PublicProfile.objects.filter(email=value).exists():
@@ -212,4 +212,4 @@ from .models import PublicProfile, ProfileAssets
 class ProfileAssetsSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProfileAssets
-        fields = ['certificate', 'id_card', 'visiting_card', 'created_at']
+        fields = ['certificate', 'id_card', 'visiting_card', 'created_at',]
