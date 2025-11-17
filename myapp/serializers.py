@@ -206,10 +206,45 @@ class MyReelsSerializer(serializers.ModelSerializer):
 
 
 
+# from rest_framework import serializers
+# from .models import PublicProfile, ProfileAssets
+
+# class ProfileAssetsSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = ProfileAssets
+#         fields = ['certificate', 'id_card', 'visiting_card', 'created_at',]
+
+
+
+
+
+
 from rest_framework import serializers
-from .models import PublicProfile, ProfileAssets
+from .models import ProfileAssets
 
 class ProfileAssetsSerializer(serializers.ModelSerializer):
+    certificate = serializers.SerializerMethodField()
+    id_card = serializers.SerializerMethodField()
+    visiting_card = serializers.SerializerMethodField()
+
     class Meta:
         model = ProfileAssets
-        fields = ['certificate', 'id_card', 'visiting_card', 'created_at',]
+        fields = ['certificate', 'id_card', 'visiting_card', 'created_at']
+
+    def get_certificate(self, obj):
+        if obj.certificate:
+            request = self.context.get("request")
+            return request.build_absolute_uri(obj.certificate.url)
+        return None
+
+    def get_id_card(self, obj):
+        if obj.id_card:
+            request = self.context.get("request")
+            return request.build_absolute_uri(obj.id_card.url)
+        return None
+
+    def get_visiting_card(self, obj):
+        if obj.visiting_card:
+            request = self.context.get("request")
+            return request.build_absolute_uri(obj.visiting_card.url)
+        return None

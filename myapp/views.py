@@ -254,7 +254,8 @@ class PublicProfileViewSet(viewsets.ModelViewSet):
         if not assets:
             return Response({"detail":"No assets yet"}, status=404)
         from .serializers import ProfileAssetsSerializer
-        return Response(ProfileAssetsSerializer(assets).data)
+        return Response(ProfileAssetsSerializer(assets, context={"request": request}).data)
+
 
 
 class MyReelsViewSet(viewsets.ModelViewSet):
