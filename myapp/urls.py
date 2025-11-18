@@ -7,7 +7,7 @@ router.register(r'hero', HeroViewSet)
 router.register(r'pdf', PDFAPI)
 router.register(r'plans',PlansAPI)
 router.register(r'feedback',TestimonialFeedbackAPI)
-router.register(r'product',ProductAPI)
+router.register(r'myproducts',ProductAPI)
 router.register(r'cart', CartAPI)
 router.register(r'blogs', BlogViewSet)
 # New Urls
