@@ -11,7 +11,7 @@ router.register(r'product',ProductAPI)
 router.register(r'cart', CartAPI)
 router.register(r'blogs', BlogViewSet)
 # New Urls
-router.register(r'products', ProductViewSet)
+# router.register(r'products', ProductViewSet)
 router.register(r'orders', OrderViewSet)
 router.register(r'leads', LeadViewSet)
 router.register(r'wallets', WalletViewSet)

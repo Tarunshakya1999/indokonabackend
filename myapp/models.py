@@ -138,62 +138,62 @@ class Category(models.Model):
    return self.name
 
 
-class Product(models.Model):
-   PRODUCT_TYPES = (( 'digital', 'Digital'), ('software','Software'), ('resale','Resale'))
-   title = models.CharField(max_length=255)
-   slug = models.SlugField(unique=True)
-   description = models.TextField(blank=True)
-   price = models.DecimalField(max_digits=10, decimal_places=2)
-   product_type = models.CharField(max_length=20, choices=PRODUCT_TYPES, default='digital')
-   file_url = models.URLField(blank=True)
-   category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.SET_NULL)
-   active = models.BooleanField(default=True)
-   created_at = models.DateTimeField(auto_now_add=True)
+# class Product(models.Model):
+#    PRODUCT_TYPES = (( 'digital', 'Digital'), ('software','Software'), ('resale','Resale'))
+#    title = models.CharField(max_length=255)
+#    slug = models.SlugField(unique=True)
+#    description = models.TextField(blank=True)
+#    price = models.DecimalField(max_digits=10, decimal_places=2)
+#    product_type = models.CharField(max_length=20, choices=PRODUCT_TYPES, default='digital')
+#    file_url = models.URLField(blank=True)
+#    category = models.ForeignKey(Category, null=True, blank=True, on_delete=models.SET_NULL)
+#    active = models.BooleanField(default=True)
+#    created_at = models.DateTimeField(auto_now_add=True)
 
-   def __str__(self):
-       return self.title
+#    def __str__(self):
+#        return self.title
    
 
 
 
-class Order(models.Model):
-  STATUS = (('pending','Pending'),('paid','Paid'),('delivered','Delivered'),('refunded','Refunded'))
-  user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
-  product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
-  amount = models.DecimalField(max_digits=10, decimal_places=2)
-  status = models.CharField(max_length=20, choices=STATUS, default='pending')
-  transaction_id = models.CharField(max_length=255, blank=True)
-  created_at = models.DateTimeField(auto_now_add=True)
+# class Order(models.Model):
+#   STATUS = (('pending','Pending'),('paid','Paid'),('delivered','Delivered'),('refunded','Refunded'))
+#   user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+#   product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
+#   amount = models.DecimalField(max_digits=10, decimal_places=2)
+#   status = models.CharField(max_length=20, choices=STATUS, default='pending')
+#   transaction_id = models.CharField(max_length=255, blank=True)
+#   created_at = models.DateTimeField(auto_now_add=True)
 
 
 
 
-class Commission(models.Model):
-  product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True)
-  percent = models.DecimalField(max_digits=5, decimal_places=2, default=10)
-  reseller = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
+# class Commission(models.Model):
+#   product = models.ForeignKey(Product, on_delete=models.CASCADE, null=True, blank=True)
+#   percent = models.DecimalField(max_digits=5, decimal_places=2, default=10)
+#   reseller = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL)
 
 
 
-class Lead(models.Model):
-   SOURCE = (('facebook','Facebook'),('instagram','Instagram'),('website','Website'),('referral','Referral'))
-   name = models.CharField(max_length=200)
-   email = models.EmailField(blank=True)
-   phone = models.CharField(max_length=30, blank=True)
-   source = models.CharField(max_length=50, choices=SOURCE, default='website')
-   status = models.CharField(max_length=50, default='new')
-   assigned_to = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='assigned_leads')
-   notes = models.TextField(blank=True)
-   created_at = models.DateTimeField(auto_now_add=True)
+# class Lead(models.Model):
+#    SOURCE = (('facebook','Facebook'),('instagram','Instagram'),('website','Website'),('referral','Referral'))
+#    name = models.CharField(max_length=200)
+#    email = models.EmailField(blank=True)
+#    phone = models.CharField(max_length=30, blank=True)
+#    source = models.CharField(max_length=50, choices=SOURCE, default='website')
+#    status = models.CharField(max_length=50, default='new')
+#    assigned_to = models.ForeignKey(User, null=True, blank=True, on_delete=models.SET_NULL, related_name='assigned_leads')
+#    notes = models.TextField(blank=True)
+#    created_at = models.DateTimeField(auto_now_add=True)
 
 
 
-class HotDeal(models.Model):
-  product = models.ForeignKey(Product, on_delete=models.CASCADE)
-  discount_price = models.DecimalField(max_digits=10, decimal_places=2)
-  start = models.DateTimeField()
-  end = models.DateTimeField()
-  active = models.BooleanField(default=True)
+# class HotDeal(models.Model):
+#   product = models.ForeignKey(Product, on_delete=models.CASCADE)
+#   discount_price = models.DecimalField(max_digits=10, decimal_places=2)
+#   start = models.DateTimeField()
+#   end = models.DateTimeField()
+#   active = models.BooleanField(default=True)
 
 
 from django.db import models
