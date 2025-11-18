@@ -132,7 +132,7 @@ from .models import Profile, Product, Order, Lead, Wallet, Commission, HotDeal
 
 
 
-class ProductSerializer(serializers.ModelSerializer):
+class ProductSerializer2(serializers.ModelSerializer):
     class Meta:
      model = Product
      fields = '__all__'

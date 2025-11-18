@@ -188,7 +188,7 @@ from rest_framework.response import Response
 
 class ProductViewSet(viewsets.ModelViewSet):
    queryset = Product.objects.all().order_by('-created_at')
-   serializer_class = ProductSerializer
+   serializer_class = ProductSerializer2  
    permission_classes = [permissions.IsAuthenticated]
 
 
