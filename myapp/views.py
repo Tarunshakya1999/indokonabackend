@@ -44,21 +44,21 @@ class RegisterView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# from rest_framework import viewsets
-# from .models import Plan, Testimonial, FAQ
-# from .serializers import PlanSerializer, TestimonialSerializer, FAQSerializer
+from rest_framework import viewsets
+from .models import Plan, Testimonial, FAQ
+from .serializers import PlanSerializer, TestimonialSerializer, FAQSerializer
 
-# class PlanViewSet(viewsets.ModelViewSet):
-#     queryset = Plan.objects.all()
-#     serializer_class = PlanSerializer
+class PlanViewSet(viewsets.ModelViewSet):
+    queryset = Plan.objects.all()
+    serializer_class = PlanSerializer
 
-# class TestimonialViewSet(viewsets.ModelViewSet):
-#     queryset = Testimonial.objects.all()
-#     serializer_class = TestimonialSerializer
+class TestimonialViewSet(viewsets.ModelViewSet):
+    queryset = Testimonial.objects.all()
+    serializer_class = TestimonialSerializer
 
-# class FAQViewSet(viewsets.ModelViewSet):
-#     queryset = FAQ.objects.all()
-#     serializer_class = FAQSerializer
+class FAQViewSet(viewsets.ModelViewSet):
+    queryset = FAQ.objects.all()
+    serializer_class = FAQSerializer
 
 
 from django.core.mail import send_mail
