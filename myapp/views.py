@@ -264,4 +264,12 @@ class MyReelsViewSet(viewsets.ModelViewSet):
 
 
 
+from rest_framework import viewsets
+from .models import UsefulLink
+from .serializers import UsefulLinkSerializer
+
+class UsefulLinkViewSet(viewsets.ModelViewSet):
+    queryset = UsefulLink.objects.all()
+    serializer_class = UsefulLinkSerializer
+
 

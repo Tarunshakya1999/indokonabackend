@@ -1,6 +1,7 @@
 from django.contrib import admin
 from myapp.models import *
 
+
 # Register your models here.
 admin.site.register(Hero)
 admin.site.register(Plan)
@@ -12,6 +13,7 @@ admin.site.register(Cart)
 admin.site.register(ContactMessage)
 admin.site.register(Blog)
 admin.site.register(MyReels)
+admin.site.register(UsefulLink)
 
 
 

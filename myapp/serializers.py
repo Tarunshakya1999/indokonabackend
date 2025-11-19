@@ -248,3 +248,15 @@ class ProfileAssetsSerializer(serializers.ModelSerializer):
             request = self.context.get("request")
             return request.build_absolute_uri(obj.visiting_card.url)
         return None
+
+
+
+
+
+from rest_framework import serializers
+from .models import UsefulLink
+
+class UsefulLinkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UsefulLink
+        fields = "__all__"

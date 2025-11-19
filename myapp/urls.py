@@ -10,6 +10,7 @@ router.register(r'feedback',TestimonialFeedbackAPI)
 router.register(r'myproducts',ProductAPI)
 router.register(r'cart', CartAPI)
 router.register(r'blogs', BlogViewSet)
+router.register(r"useful-links", UsefulLinkViewSet)
 # New Urls
 # router.register(r'products', ProductViewSet)
 router.register(r'orders', OrderViewSet)

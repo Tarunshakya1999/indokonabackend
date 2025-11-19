@@ -298,3 +298,15 @@ class ProfileAssets(models.Model):
 
     def __str__(self):
         return f"Assets for {self.profile}"
+    
+
+
+
+from django.db import models
+
+class UsefulLink(models.Model):
+    name = models.CharField(max_length=255)
+    url = models.URLField()
+
+    def __str__(self):
+        return self.name
