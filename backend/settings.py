@@ -10,7 +10,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     "indokonabackend-1.onrender.com",
-    "127.0.0.1"
+    "127.0.0.1",
 ]
 
 
@@ -43,6 +43,9 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "https://indokonafrontend.vercel.app",
+    "https://www.indokona.com",
+    "https://indokona.com",
+    
 ]
 
 
@@ -142,10 +145,14 @@ RAZORPAY_KEY_SECRET = "YOUR_SECRET_KEY"
 
 CORS_ALLOWED_ORIGINS = [
     "https://indokonafrontend.vercel.app",
+    "https://www.indokona.com",
+    "https://indokona.com",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://indokonafrontend.vercel.app",
+    "https://www.indokona.com",
+    "https://indokona.com",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
