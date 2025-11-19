@@ -11,6 +11,7 @@ admin.site.register(DigitalProducts)
 admin.site.register(Cart)
 admin.site.register(ContactMessage)
 admin.site.register(Blog)
+admin.site.register(MyReels)
 
 
 
