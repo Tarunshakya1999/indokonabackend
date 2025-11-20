@@ -269,7 +269,7 @@ from .models import UsefulLink
 from .serializers import UsefulLinkSerializer
 
 class UsefulLinkViewSet(viewsets.ModelViewSet):
-    queryset = UsefulLink.objects.all()
+    queryset = UsefulLink.objects.all().order_by("-id")
     serializer_class = UsefulLinkSerializer
 
 
