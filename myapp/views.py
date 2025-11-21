@@ -281,3 +281,17 @@ class UsefulLinkViewSet(viewsets.ModelViewSet):
     serializer_class = UsefulLinkSerializer
 
 
+
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all().order_by("id")
+    serializer_class = CommentSerializer
+
+    # 🔥 Filter comments by post ID → /api/comments/?post=2
+    def get_queryset(self):
+        qs = super().get_queryset()
+        post_id = self.request.query_params.get("post")
+        if post_id:
+            qs = qs.filter(post_id=post_id)
+        return qs
