@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Hero, ROLE_CHOICES ,PDF
+from myapp.models import *
 from django.contrib.auth.models import User
 from myapp.models import *
 

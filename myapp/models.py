@@ -314,3 +314,11 @@ class UsefulLink(models.Model):
     
 
 
+class Comment(models.Model):
+    post = models.ForeignKey(MyPosts, on_delete=models.CASCADE, related_name="comments")
+    author = models.CharField(max_length=200)  # “You”
+    text = models.TextField()  # emoji / gif / sticker / hashtags
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.author} - {self.text[:20]}"
