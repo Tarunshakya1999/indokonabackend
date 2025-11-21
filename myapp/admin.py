@@ -14,6 +14,7 @@ admin.site.register(ContactMessage)
 admin.site.register(Blog)
 admin.site.register(MyReels)
 admin.site.register(UsefulLink)
+admin.site.register(MyPosts)
 
 
 

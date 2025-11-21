@@ -264,6 +264,14 @@ class MyReelsViewSet(viewsets.ModelViewSet):
 
 
 
+
+class MypostViewSet(viewsets.ModelViewSet):
+    queryset = MyPosts.objects.all().order_by('-id')
+    serializer_class = MyPostSerializer
+
+
+
+
 from rest_framework import viewsets
 from .models import UsefulLink
 from .serializers import UsefulLinkSerializer

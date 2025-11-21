@@ -260,3 +260,10 @@ class UsefulLinkSerializer(serializers.ModelSerializer):
     class Meta:
         model = UsefulLink
         fields = "__all__"
+
+
+
+class MyPostSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MyPosts
+        fields = "__all__"
