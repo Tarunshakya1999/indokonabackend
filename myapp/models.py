@@ -249,6 +249,7 @@ class MyReels(models.Model):
 class MyPosts(models.Model):
     author = models.TextField()
     title = models.CharField(max_length=50)
+    body = models.CharField( max_length=80,null=True, blank=True)
     image = models.ImageField(upload_to="myposts")
     likes = models.IntegerField(default=0)
     time = models.TimeField(auto_now=False, auto_now_add=False)
