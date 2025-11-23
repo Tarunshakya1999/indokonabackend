@@ -306,7 +306,7 @@ from django.contrib.auth.models import User
 
 class RegisterView(APIView):
     def post(self, request):
-        name = request.data.get("name")
+        username = request.data.get("name")
         email = request.data.get("email")
         password = request.data.get("password")
 
@@ -314,9 +314,8 @@ class RegisterView(APIView):
             return Response({"error": "Email already exists"}, status=400)
 
         user = User.objects.create_user(
-            username=email,
+            username=username,
             email=email,
-            first_name=name,
             password=password
         )
 
