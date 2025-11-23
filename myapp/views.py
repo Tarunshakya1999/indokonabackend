@@ -295,3 +295,128 @@ class CommentViewSet(viewsets.ModelViewSet):
         if post_id:
             qs = qs.filter(post_id=post_id)
         return qs
+    
+
+
+
+# authapp/views.py
+
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import send_mail
+from rest_framework_simplejwt.tokens import RefreshToken
+from .models import Profile
+from .serializers import UserSerializer
+
+# Register user (creates inactive user and sends verification email)
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def register(request):
+    username = request.data.get('username')
+    email = request.data.get('email')
+    password = request.data.get('password')
+    role = request.data.get('role','user')
+    if not username or not email or not password:
+        return Response({'error':'Provide username, email and password'}, status=400)
+    if User.objects.filter(username=username).exists():
+        return Response({'error':'Username exists'}, status=400)
+    if User.objects.filter(email=email).exists():
+        return Response({'error':'Email exists'}, status=400)
+    user = User.objects.create_user(username=username, email=email, password=password, is_active=False)
+    # set role on profile
+    user.profile.role = role
+    user.profile.save()
+
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    token = default_token_generator.make_token(user)
+    # frontend verification route (change host/port for production)
+    verify_link = f"http://127.0.0.1:3000/verify-email/{uid}/{token}"
+    message = f"Hi {username}, click to verify your email: {verify_link}"
+    send_mail('Verify your email', message, None, [email])
+
+    return Response({'msg':'User created. Verification email sent (check console).'})
+
+# Verify email
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def verify_email(request):
+    uidb64 = request.data.get('uid')
+    token = request.data.get('token')
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except Exception:
+        return Response({'error':'Invalid link'}, status=400)
+    if default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        return Response({'msg':'Email verified, you can login now.'})
+    return Response({'error':'Invalid or expired token'}, status=400)
+
+# Obtain JWT tokens (custom wrapper so we can check is_active)
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def token_obtain_pair(request):
+    username = request.data.get('username')
+    password = request.data.get('password')
+    if not username or not password:
+        return Response({'error':'Provide username and password'}, status=400)
+    user = authenticate(username=username, password=password)
+    if user is None:
+        return Response({'error':'Invalid credentials'}, status=400)
+    if not user.is_active:
+        return Response({'error':'Account not active. Verify your email.'}, status=400)
+    refresh = RefreshToken.for_user(user)
+    return Response({'refresh': str(refresh), 'access': str(refresh.access_token)})
+
+# # Profile endpoint (returns username, email, role)
+# @api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+# def profile_view(request):
+#     user = request.user
+#     ser = UserSerializer(user)
+#     return Response(ser.data)
+
+# Password reset: send link
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def password_reset(request):
+    email = request.data.get('email')
+    # don't reveal whether email exists
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        # respond success (prevent enumeration)
+        return Response({'msg':'If that email exists, a reset link has been sent.'})
+    uid = urlsafe_base64_encode(force_bytes(user.pk))
+    token = default_token_generator.make_token(user)
+    reset_link = f"http://127.0.0.1:3000/reset-password/{uid}/{token}"
+    message = f"Reset your password: {reset_link}"
+    send_mail('Password reset', message, None, [email])
+    return Response({'msg':'Reset link sent (check console).'})
+
+# Password reset confirm
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def password_reset_confirm(request):
+    uidb64 = request.data.get('uid')
+    token = request.data.get('token')
+    new_password = request.data.get('password')
+    if not new_password:
+        return Response({'error':'Provide new password'}, status=400)
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except Exception:
+        return Response({'error':'Invalid link'}, status=400)
+    if default_token_generator.check_token(user, token):
+        user.set_password(new_password)
+        user.save()
+        return Response({'msg':'Password has been reset.'})
+    return Response({'error':'Invalid or expired token'}, status=400)
