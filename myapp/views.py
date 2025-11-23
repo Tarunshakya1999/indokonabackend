@@ -298,19 +298,19 @@ class CommentViewSet(viewsets.ModelViewSet):
     
 
 
-
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from django.contrib.auth.models import User
-
 class RegisterView(APIView):
     def post(self, request):
-        username = request.data.get("name")
+        username = request.data.get("username")
         email = request.data.get("email")
         password = request.data.get("password")
 
-        if User.objects.filter(username=email).exists():
+        if not username or not email or not password:
+            return Response({"error": "All fields are required"}, status=400)
+
+        if User.objects.filter(username=username).exists():
+            return Response({"error": "Username already exists"}, status=400)
+
+        if User.objects.filter(email=email).exists():
             return Response({"error": "Email already exists"}, status=400)
 
         user = User.objects.create_user(
@@ -320,7 +320,3 @@ class RegisterView(APIView):
         )
 
         return Response({"message": "User registered successfully"}, status=201)
-
-    
-
-
