@@ -320,3 +320,38 @@ class RegisterView(APIView):
         )
 
         return Response({"message": "User registered successfully"}, status=201)
+
+
+
+
+
+
+
+
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.views import APIView
+from django.contrib.auth import authenticate
+from rest_framework_simplejwt.tokens import RefreshToken
+
+
+class CustomLoginView(APIView):
+    def post(self, request):
+        username = request.data.get("username")
+        password = request.data.get("password")
+
+        # User check
+        user = authenticate(username=username, password=password)
+
+        if user is None:
+            return Response({"error": "Invalid username or password"}, status=400)
+
+        # Generate tokens
+        refresh = RefreshToken.for_user(user)
+
+        return Response({
+            "access": str(refresh.access_token),
+            "refresh": str(refresh),
+            "username": user.username,   # extra data (you wanted this)
+            "email": user.email
+        }, status=200)

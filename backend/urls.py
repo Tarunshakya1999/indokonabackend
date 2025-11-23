@@ -42,7 +42,7 @@ urlpatterns = [
     path('api/register2/', RegisterView.as_view()),
 
     # Login
-    path('api/login2/', TokenObtainPairView.as_view()),
+    path('api/login2/',CustomLoginView.as_view()),
 
     # Refresh token
     path('api/refresh2/', TokenRefreshView.as_view()),
