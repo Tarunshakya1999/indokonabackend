@@ -38,14 +38,15 @@ urlpatterns = [
     # path('login2/', CustomLoginView.as_view(), name="login2"),
     # path('get-role/', get_user_role),
 
-    path('register2/', register),
-    path('verify-email/',verify_email),
-    path('token/',token_obtain_pair),
-    # path('profile/',profile_view),
-    path('password-reset/',password_reset),
-    path('password-reset-confirm/',password_reset_confirm),
+      # Signup
+    path('api/register2/', RegisterView.as_view()),
 
-    
+    # Login
+    path('api/login2/', TokenObtainPairView.as_view()),
+
+    # Refresh token
+    path('api/refresh2/', TokenRefreshView.as_view()),
+
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
