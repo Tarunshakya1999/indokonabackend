@@ -313,34 +313,64 @@ from django.core.mail import send_mail
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import Profile
 from .serializers import UserSerializer
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from django.contrib.auth.models import User
+from django.core.mail import send_mail
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.contrib.auth.tokens import default_token_generator
 
-# Register user (creates inactive user and sends verification email)
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def register(request):
+
     username = request.data.get('username')
     email = request.data.get('email')
     password = request.data.get('password')
-    role = request.data.get('role','user')
-    if not username or not email or not password:
-        return Response({'error':'Provide username, email and password'}, status=400)
-    if User.objects.filter(username=username).exists():
-        return Response({'error':'Username exists'}, status=400)
-    if User.objects.filter(email=email).exists():
-        return Response({'error':'Email exists'}, status=400)
-    user = User.objects.create_user(username=username, email=email, password=password, is_active=False)
-    # set role on profile
-    user.profile.role = role
-    user.profile.save()
+    role = request.data.get('role', 'user')
 
+    if not username or not email or not password:
+        return Response({'error': 'Provide username, email and password'}, status=400)
+
+    if User.objects.filter(username=username).exists():
+        return Response({'error': 'Username already exists'}, status=400)
+
+    if User.objects.filter(email=email).exists():
+        return Response({'error': 'Email already exists'}, status=400)
+
+    # Create user
+    user = User.objects.create_user(
+        username=username,
+        email=email,
+        password=password,
+        is_active=False
+    )
+
+    # Create / Update Profile.role
+    profile = user.profile
+    profile.role = role
+    profile.save()
+
+    # === Email Verification Link ===
     uid = urlsafe_base64_encode(force_bytes(user.pk))
     token = default_token_generator.make_token(user)
-    # frontend verification route (change host/port for production)
-    verify_link = f"http://127.0.0.1:3000/verify-email/{uid}/{token}"
-    message = f"Hi {username}, click to verify your email: {verify_link}"
-    send_mail('Verify your email', message, None, [email])
 
-    return Response({'msg':'User created. Verification email sent (check console).'})
+    # 👇 PRODUCTION LINK (INDOKONA.COM)
+    verify_link = f"https://www.indokona.com/verify-email/{uid}/{token}"
+
+    message = f"Hi {username}, click to verify your account:\n{verify_link}"
+
+    send_mail(
+        subject="Verify your Indokona Account",
+        message=message,
+        from_email=None,
+        recipient_list=[email],
+        fail_silently=False
+    )
+
+    return Response({'msg': 'User registered successfully! Please check your email to verify.'})
 
 # Verify email
 @api_view(['POST'])
