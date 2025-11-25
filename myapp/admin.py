@@ -15,7 +15,7 @@ admin.site.register(Blog)
 admin.site.register(MyReels)
 admin.site.register(UsefulLink)
 admin.site.register(MyPosts)
-admin.site.register(MSMERegistration)
+# admin.site.register(MSMERegistration)
 
 
 
