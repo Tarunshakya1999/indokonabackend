@@ -88,41 +88,93 @@ class PublicProfileAdmin(admin.ModelAdmin):
 
 
 
-
 from django.contrib import admin
 from django.http import HttpResponse
 from reportlab.pdfgen import canvas
+from reportlab.lib.utils import ImageReader
 from .models import MSMERegistration
+import os
+from django.conf import settings
 
-@admin.action(description="Download Selected as PDF")
+
+@admin.action(description="📄 Download Selected MSME Data as PDF")
 def export_pdf(modeladmin, request, queryset):
-    # PDF response
-    response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="msme_data.pdf"'
+    response = HttpResponse(content_type="application/pdf")
+    response["Content-Disposition"] = 'attachment; filename="msme_data.pdf"'
 
     p = canvas.Canvas(response)
-
-    y = 800  # Starting position
+    y = 820
 
     for obj in queryset:
-        p.drawString(50, y, f"Full Name: {obj.full_name}")
-        p.drawString(50, y-20, f"Mobile: {obj.mobile_number}")
-        p.drawString(50, y-40, f"Email: {obj.email}")
-        p.drawString(50, y-60, f"Aadhaar: {obj.aadhaar_number}")
-        p.drawString(50, y-80, f"Business: {obj.business_name}")
 
-        y -= 120
+        # ------- ALL TEXT FIELDS -------
+        fields = [
+            ("Full Name", obj.full_name),
+            ("Mobile Number", obj.mobile_number),
+            ("Email", obj.email),
+            ("Aadhaar Number", obj.aadhaar_number),
+            ("Applicant Type", obj.applicant_type),
+            ("Business Name", obj.business_name),
+            ("Business Address", obj.business_address),
+            ("State", obj.state),
+            ("District", obj.district),
+            ("PIN Code", obj.pincode),
+            ("Business Type", obj.business_type),
+            ("Date of Starting", str(obj.date_of_starting)),
+            ("PAN Number", obj.pan_number),
+            ("Bank Account", obj.bank_account_number),
+            ("IFSC Code", obj.ifsc_code),
+            ("Employees", str(obj.number_of_employees)),
+            ("Investment", obj.investment_in_plant_machinery),
+            ("Annual Turnover", obj.annual_turnover),
+            ("Created At", str(obj.created_at)),
+        ]
 
-        if y < 100:  # New page
-            p.showPage()
-            y = 800
+        for label, value in fields:
+            p.drawString(40, y, f"{label}: {value}")
+            y -= 20
+
+            if y < 100:
+                p.showPage()
+                y = 820
+
+        # ------- Aadhaar Front Image -------
+        if obj.aadhaar_front:
+            img_path = os.path.join(settings.MEDIA_ROOT, obj.aadhaar_front.name)
+            if os.path.exists(img_path):
+                p.drawString(40, y, "Aadhaar Front:")
+                y -= 160
+                p.drawImage(ImageReader(img_path), 40, y, width=250, height=150)
+                y -= 20
+
+        # ------- Aadhaar Back Image -------
+        if obj.aadhaar_back:
+            img_path = os.path.join(settings.MEDIA_ROOT, obj.aadhaar_back.name)
+            if os.path.exists(img_path):
+                p.drawString(40, y, "Aadhaar Back:")
+                y -= 160
+                p.drawImage(ImageReader(img_path), 40, y, width=250, height=150)
+                y -= 20
+
+        # ------- Business Proof Image -------
+        if obj.business_proof:
+            img_path = os.path.join(settings.MEDIA_ROOT, obj.business_proof.name)
+            if os.path.exists(img_path):
+                p.drawString(40, y, "Business Proof:")
+                y -= 160
+                p.drawImage(ImageReader(img_path), 40, y, width=250, height=150)
+                y -= 20
+
+        # New Page for next record
+        p.showPage()
+        y = 820
 
     p.save()
     return response
 
 
+
 @admin.register(MSMERegistration)
 class MSMEAdmin(admin.ModelAdmin):
     list_display = [field.name for field in MSMERegistration._meta.fields]
-    actions = [export_pdf]   # <-- PDF EXPORT BUTTON
-
+    actions = [export_pdf]
