@@ -281,3 +281,23 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 
+
+
+from rest_framework import serializers
+from .models import MSMERegistration
+
+class MSMERegistrationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MSMERegistration
+        fields = "__all__"
+
+    def validate_aadhaar_number(self, value):
+        if not value.isdigit() or len(value) != 12:
+            raise serializers.ValidationError("Aadhaar must be 12 digits.")
+        return value
+
+    def validate_ifsc_code(self, value):
+        import re
+        if not re.match(r"^[A-Z]{4}0[A-Z0-9]{6}$", value):
+            raise serializers.ValidationError("Invalid IFSC format.")
+        return value

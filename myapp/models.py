@@ -322,3 +322,51 @@ class Comment(models.Model):
 
     def __str__(self):
         return f"{self.author} - {self.text[:20]}"
+    
+
+
+
+
+# MSME Form Model 
+
+from django.db import models
+
+class MSMERegistration(models.Model):
+    APPLICANT_CHOICES = [
+        ("Proprietor", "Proprietor"),
+        ("Partnership", "Partnership"),
+        ("Pvt Ltd", "Pvt Ltd"),
+        ("LLP", "LLP"),
+    ]
+    BUSINESS_CHOICES = [
+        ("Manufacturer", "Manufacturer"),
+        ("Service", "Service"),
+    ]
+
+    full_name = models.CharField(max_length=255)
+    mobile_number = models.CharField(max_length=15)
+    email = models.EmailField()
+    aadhaar_number = models.CharField(max_length=12)
+    applicant_type = models.CharField(max_length=20, choices=APPLICANT_CHOICES)
+    business_name = models.CharField(max_length=255)
+    business_address = models.TextField()
+    state = models.CharField(max_length=100)
+    district = models.CharField(max_length=100)
+    pincode = models.CharField(max_length=6)
+    business_type = models.CharField(max_length=20, choices=BUSINESS_CHOICES)
+    date_of_starting = models.DateField()
+    pan_number = models.CharField(max_length=10, blank=True, null=True)
+    bank_account_number = models.CharField(max_length=30)
+    ifsc_code = models.CharField(max_length=11)
+    number_of_employees = models.PositiveIntegerField(blank=True, null=True)
+    investment_in_plant_machinery = models.CharField(max_length=100, blank=True, null=True)
+    annual_turnover = models.CharField(max_length=100, blank=True, null=True)
+
+    aadhaar_front = models.FileField(upload_to="aadhaar/")
+    aadhaar_back = models.FileField(upload_to="aadhaar/")
+    business_proof = models.FileField(upload_to="business_proofs/")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.full_name} - {self.business_name}"

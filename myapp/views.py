@@ -355,3 +355,24 @@ class CustomLoginView(APIView):
             "username": user.username,   # extra data (you wanted this)
             "email": user.email
         }, status=200)
+
+
+
+
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status, permissions
+from rest_framework.parsers import MultiPartParser, FormParser
+from .serializers import MSMERegistrationSerializer
+
+class MSMERegisterView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+    permission_classes = [permissions.AllowAny]  # change as needed
+
+    def post(self, request, format=None):
+        serializer = MSMERegistrationSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"detail": "Saved"}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
