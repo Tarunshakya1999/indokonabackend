@@ -85,3 +85,44 @@ class PublicProfileAdmin(admin.ModelAdmin):
     search_fields = ("name", "email", "phone", "aadhar_number")
     readonly_fields = ("created_at",)
     list_editable = ("is_varied",)
+
+
+
+
+from django.contrib import admin
+from django.http import HttpResponse
+from reportlab.pdfgen import canvas
+from .models import MSMERegistration
+
+@admin.action(description="Download Selected as PDF")
+def export_pdf(modeladmin, request, queryset):
+    # PDF response
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="msme_data.pdf"'
+
+    p = canvas.Canvas(response)
+
+    y = 800  # Starting position
+
+    for obj in queryset:
+        p.drawString(50, y, f"Full Name: {obj.full_name}")
+        p.drawString(50, y-20, f"Mobile: {obj.mobile_number}")
+        p.drawString(50, y-40, f"Email: {obj.email}")
+        p.drawString(50, y-60, f"Aadhaar: {obj.aadhaar_number}")
+        p.drawString(50, y-80, f"Business: {obj.business_name}")
+
+        y -= 120
+
+        if y < 100:  # New page
+            p.showPage()
+            y = 800
+
+    p.save()
+    return response
+
+
+@admin.register(MSMERegistration)
+class MSMEAdmin(admin.ModelAdmin):
+    list_display = [field.name for field in MSMERegistration._meta.fields]
+    actions = [export_pdf]   # <-- PDF EXPORT BUTTON
+
