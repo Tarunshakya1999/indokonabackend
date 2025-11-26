@@ -264,3 +264,104 @@ class FssaiRegistrationAdmin(admin.ModelAdmin):
 
 
 admin.site.register(FssaiRegistration, FssaiRegistrationAdmin)
+
+
+
+
+
+from django.contrib import admin
+from django.http import HttpResponse
+from reportlab.pdfgen import canvas
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, PageBreak
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet
+from django.conf import settings
+import os
+
+from .models import Trademark
+
+
+def download_as_pdf(modeladmin, request, queryset):
+    if queryset.count() != 1:
+        return HttpResponse("Please select only one record to download.")
+
+    obj = queryset.first()
+
+    # PDF filename
+    filename = f"Trademark_{obj.id}.pdf"
+
+    # Create HTTP Response
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+
+    doc = SimpleDocTemplate(response, pagesize=A4)
+    styles = getSampleStyleSheet()
+    story = []
+
+    # ----------------------------------------
+    #  Add all text fields
+    # ----------------------------------------
+    story.append(Paragraph("<b>Trademark Registration Details</b>", styles['Title']))
+    story.append(Spacer(1, 20))
+
+    fields = [
+        ("Applicant Name", obj.applicant_name),
+        ("Mobile Number", obj.mobile),
+        ("Email", obj.email),
+        ("Business Type", obj.business_type),
+        ("Brand Name", obj.brand_name),
+        ("Classes Selected", obj.classes),
+        ("Activity Description", obj.business_activity),
+        ("Address", obj.address),
+        ("State", obj.state),
+        ("Pincode", obj.pincode),
+        ("Created At", obj.created_at.strftime("%d-%m-%Y %H:%M"))
+    ]
+
+    for label, value in fields:
+        story.append(Paragraph(f"<b>{label}:</b> {value}", styles['Normal']))
+        story.append(Spacer(1, 10))
+
+    story.append(PageBreak())
+
+    # ----------------------------------------
+    # File fields (Image + PDF)
+    # ----------------------------------------
+    file_fields = [
+        ("Brand Logo", obj.brand_logo),
+        ("Aadhaar", obj.aadhaar),
+        ("PAN", obj.pan),
+        ("Business Proof", obj.business_proof),
+    ]
+
+    for title, filefield in file_fields:
+        if filefield:
+            file_path = os.path.join(settings.MEDIA_ROOT, filefield.name)
+
+            story.append(Paragraph(f"<b>{title}</b>", styles["Heading2"]))
+            story.append(Spacer(1, 15))
+
+            # Check if image
+            if filefield.name.lower().endswith((".jpg", ".jpeg", ".png")):
+                try:
+                    story.append(Image(file_path, width=400, height=500))
+                except:
+                    story.append(Paragraph("Unable to load image", styles["Normal"]))
+            else:
+                # For PDF/other file: show file path
+                story.append(Paragraph(f"File: {filefield.url}", styles["Normal"]))
+
+            story.append(PageBreak())  # Each file separate page
+
+    # Build PDF
+    doc.build(story)
+    return response
+
+
+download_as_pdf.short_description = "Download Selected as PDF"
+
+@admin.register(Trademark)
+class TrademarkAdmin(admin.ModelAdmin):
+    list_display = ("id", "applicant_name", "mobile", "email", "business_type")
+    actions = [download_as_pdf]
+

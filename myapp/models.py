@@ -397,3 +397,41 @@ class FssaiRegistration(models.Model):
 
     def __str__(self):
         return self.applicant_name
+    
+
+
+
+from django.db import models
+
+class Trademark(models.Model):
+    BUSINESS_TYPES = (
+        ("Owner","Owner"),
+        ("Firm","Firm"),
+        ("Pvt Ltd","Pvt Ltd"),
+        ("LLP","LLP")
+    )
+
+    applicant_name = models.CharField(max_length=100)
+    mobile = models.CharField(max_length=15)
+    email = models.EmailField()
+    business_type = models.CharField(max_length=20, choices=BUSINESS_TYPES)
+
+    brand_name = models.CharField(max_length=100)
+    brand_logo = models.ImageField(upload_to="trademark_docs/logos/")
+
+    classes = models.CharField(max_length=200)   # Store multiple classes as comma-separated
+    business_activity = models.TextField()
+
+    address = models.TextField()
+    state = models.CharField(max_length=50)
+    pincode = models.CharField(max_length=10)
+
+    aadhaar = models.FileField(upload_to="trademark_docs/aadhaar/")
+    pan = models.FileField(upload_to="trademark_docs/pan/")
+    business_proof = models.FileField(upload_to="trademark_docs/proof/")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.applicant_name
+

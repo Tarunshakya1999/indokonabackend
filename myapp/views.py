@@ -387,3 +387,26 @@ from .serializers import FssaiRegistrationSerializer
 class FssaiRegistrationViewSet(viewsets.ModelViewSet):
     queryset = FssaiRegistration.objects.all().order_by("-id")
     serializer_class = FssaiRegistrationSerializer
+
+
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.parsers import MultiPartParser, FormParser
+
+from .models import Trademark
+from .serializers import TrademarkSerializer
+
+class TrademarkView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
+
+    def post(self, request, *args, **kwargs):
+        serializer = TrademarkSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {"msg": "Trademark Submitted Successfully", "data": serializer.data},
+                status=status.HTTP_201_CREATED
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
