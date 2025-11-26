@@ -370,3 +370,30 @@ class MSMERegistration(models.Model):
 
     def __str__(self):
         return f"{self.full_name} - {self.business_name}"
+
+
+
+
+
+
+from django.db import models
+
+class FssaiRegistration(models.Model):
+    applicant_name = models.CharField(max_length=200)
+    business_name = models.CharField(max_length=200)
+    address = models.TextField()
+
+    business_type = models.CharField(max_length=200)
+    turnover = models.CharField(max_length=50)
+    processing = models.CharField(max_length=200)
+
+    # File fields
+    aadhar = models.FileField(upload_to="fssai_docs/")
+    photo = models.ImageField(upload_to="fssai_docs/")
+    shop_docs = models.FileField(upload_to="fssai_docs/")
+    layout = models.FileField(upload_to="fssai_docs/")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.applicant_name

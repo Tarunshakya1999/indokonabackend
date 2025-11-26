@@ -301,3 +301,17 @@ class MSMERegistrationSerializer(serializers.ModelSerializer):
         if not re.match(r"^[A-Z]{4}0[A-Z0-9]{6}$", value):
             raise serializers.ValidationError("Invalid IFSC format.")
         return value
+
+
+
+from rest_framework import serializers
+from .models import FssaiRegistration
+
+class FssaiRegistrationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FssaiRegistration
+        fields = "__all__"
+
+
+
+

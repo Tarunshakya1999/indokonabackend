@@ -376,3 +376,14 @@ class MSMERegisterView(APIView):
             serializer.save()
             return Response({"detail": "Saved"}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+from rest_framework import viewsets
+from .models import FssaiRegistration
+from .serializers import FssaiRegistrationSerializer
+
+class FssaiRegistrationViewSet(viewsets.ModelViewSet):
+    queryset = FssaiRegistration.objects.all().order_by("-id")
+    serializer_class = FssaiRegistrationSerializer
