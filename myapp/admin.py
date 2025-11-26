@@ -180,7 +180,6 @@ class MSMEAdmin(admin.ModelAdmin):
     actions = [export_pdf]
 
 
-
 from django.contrib import admin
 from django.http import HttpResponse
 from django.conf import settings
@@ -188,12 +187,14 @@ from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.utils import ImageReader
 import os
+from mimetypes import guess_type
 
 from .models import FssaiRegistration
 
 
 @admin.action(description="Download selected FSSAI records as PDF")
 def download_pdf(modeladmin, request, queryset):
+
     response = HttpResponse(content_type="application/pdf")
     response["Content-Disposition"] = 'attachment; filename="fssai_records.pdf"'
 
@@ -206,53 +207,70 @@ def download_pdf(modeladmin, request, queryset):
         p.setFont("Helvetica-Bold", 16)
         p.drawString(50, y, "FSSAI Registration Record")
         y -= 30
-
         p.setFont("Helvetica", 12)
 
-        # -------- TEXT FIELDS ----------
-        fields_to_show = [
+        # ---- BASIC TEXT ----
+        fields = [
             ("Applicant Name", obj.applicant_name),
             ("Business Name", obj.business_name),
             ("Address", obj.address),
             ("Business Type", obj.business_type),
             ("Turnover", obj.turnover),
             ("Processing", obj.processing),
-            ("Created At", obj.created_at.strftime("%d-%m-%Y %H:%M")),
         ]
 
-        for label, value in fields_to_show:
-            p.drawString(50, y, f"{label}: {value}")
+        for title, val in fields:
+            p.drawString(50, y, f"{title}: {val}")
             y -= 22
-
-            if y < 120:
+            if y < 150:
                 p.showPage()
                 y = height - 50
 
-        # ---------- IMAGES (photo + aadhar) ----------
-        def draw_image(title, img_field):
+        # ###############
+        # FILE RENDER FUNCTION
+        # ###############
+        def render_file(title, filefield):
             nonlocal y
-            if img_field:
-                img_path = os.path.join(settings.MEDIA_ROOT, img_field.name)
-                if os.path.exists(img_path):
-                    p.setFont("Helvetica-Bold", 12)
-                    p.drawString(50, y, f"{title}:")
-                    y -= 10
-                    p.drawImage(ImageReader(img_path), 50, y - 180, width=200, height=180)
+            if not filefield:
+                return
+
+            file_path = os.path.join(settings.MEDIA_ROOT, filefield.name)
+
+            p.setFont("Helvetica-Bold", 13)
+            p.drawString(50, y, f"{title}:")
+            y -= 20
+
+            # Check file type
+            file_type, _ = guess_type(file_path)
+
+            # ---- IF IMAGE ----
+            if file_type and file_type.startswith("image"):
+                try:
+                    p.drawImage(ImageReader(file_path), 50, y - 180, width=200, height=180)
                     y -= 200
+                except:
+                    p.drawString(50, y, "[Error loading image]")
+                    y -= 20
 
-        draw_image("Applicant Photo", obj.photo)
-        draw_image("Aadhar Image / PDF", obj.aadhar)
+            else:
+                # ---- IF PDF / DOC — show download link ----
+                file_url = settings.MEDIA_URL + filefield.name
 
-        # ---------- OTHER FILES (PDF / DOC / IMAGES) ----------
-        def draw_file(title, file_field):
-            nonlocal y
-            if file_field:
-                p.setFont("Helvetica-Bold", 12)
-                p.drawString(50, y, f"{title}: {file_field.name}")
+                p.setFillColorRGB(0, 0, 1)     # blue color link
+                p.drawString(60, y, f"Download File: {file_url}")
+                p.setFillColorRGB(0, 0, 0)
+
                 y -= 20
 
-        draw_file("Shop Document", obj.shop_docs)
-        draw_file("Layout Document", obj.layout)
+            if y < 150:
+                p.showPage()
+                y = height - 50
+
+        # ########### RENDER ALL 4 FILES ###########
+        render_file("Aadhar", obj.aadhar)
+        render_file("Photo", obj.photo)
+        render_file("Shop Document", obj.shop_docs)
+        render_file("Layout Document", obj.layout)
 
         # New page for next record
         p.showPage()
