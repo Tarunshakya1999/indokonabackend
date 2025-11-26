@@ -180,109 +180,87 @@ class MSMEAdmin(admin.ModelAdmin):
     actions = [export_pdf]
 
 from django.contrib import admin
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet
 from django.http import HttpResponse
 from django.conf import settings
-from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.utils import ImageReader
 import os
-from mimetypes import guess_type
 
 from .models import FssaiRegistration
 
 
-@admin.action(description="Download selected FSSAI records as PDF")
-def download_pdf(modeladmin, request, queryset):
+class FssaiRegistrationAdmin(admin.ModelAdmin):
+    list_display = ("id", "applicant_name", "business_name","address","business_type","turnover","processing","aadhar","photo","shop_docs","layout","created_at")
+    actions = ["download_selected_pdf"]
 
-    response = HttpResponse(content_type="application/pdf")
-    response["Content-Disposition"] = 'attachment; filename=\"fssai_records.pdf\"'
+    def download_selected_pdf(self, request, queryset):
+        response = HttpResponse(content_type="application/pdf")
+        response["Content-Disposition"] = "attachment; filename=fssai_records.pdf"
 
-    p = canvas.Canvas(response, pagesize=A4)
-    width, height = A4
-    y = height - 50
+        doc = SimpleDocTemplate(response, pagesize=A4)
+        styles = getSampleStyleSheet()
+        story = []
 
-    for obj in queryset:
+        for obj in queryset:
 
-        p.setFont("Helvetica-Bold", 16)
-        p.drawString(50, y, "FSSAI Registration Record")
-        y -= 30
-        p.setFont("Helvetica", 12)
+            story.append(Paragraph("<b>FSSAI Registration Details</b>", styles["Title"]))
+            story.append(Spacer(1, 12))
 
-        # Basic Fields
-        fields = [
-            ("Applicant Name", obj.applicant_name),
-            ("Business Name", obj.business_name),
-            ("Address", obj.address),
-            ("Business Type", obj.business_type),
-            ("Turnover", obj.turnover),
-            ("Processing", obj.processing),
-        ]
+            # All fields dynamically
+            for field in obj._meta.fields:
+                value = getattr(obj, field.name)
 
-        for label, value in fields:
-            p.drawString(50, y, f"{label}: {value}")
-            y -= 22
-            if y < 150:
-                p.showPage()
-                y = height - 50
+                if hasattr(value, "url"):
+                    file_url = request.build_absolute_uri(value.url)
+                    story.append(
+                        Paragraph(
+                            f"<b>{field.verbose_name}:</b> <a href='{file_url}'>{file_url}</a>",
+                            styles["Normal"],
+                        )
+                    )
+                else:
+                    story.append(
+                        Paragraph(
+                            f"<b>{field.verbose_name}:</b> {value}",
+                            styles["Normal"],
+                        )
+                    )
 
-        # ---------- FILE RENDER FUNCTION ----------
-        def render_file(title, filefield):
-            nonlocal y
-            if not filefield:
-                return
+                story.append(Spacer(1, 6))
 
-            file_path = os.path.join(settings.MEDIA_ROOT, filefield.name)
-            file_url = settings.MEDIA_URL + filefield.name
-            file_type, _ = guess_type(file_path)
+            story.append(Spacer(1, 14))
 
-            p.setFont("Helvetica-Bold", 13)
-            p.drawString(50, y, f"{title}:")
-            y -= 20
+            # -------------------------------------------
+            #     EMBED IMAGE FOR aadhar & photo fields
+            # -------------------------------------------
 
-            # IMAGE
-            if file_type and file_type.startswith("image"):
-                try:
-                    p.drawImage(ImageReader(file_path), 50, y-180, width=200, height=180)
-                    y -= 200
-                except:
-                    p.drawString(60, y, "[Error loading image]")
-                    y -= 20
+            # AADHAR (if the uploaded file is an image)
+            if obj.aadhar:
+                aadhar_path = os.path.join(settings.MEDIA_ROOT, obj.aadhar.name)
+                if os.path.exists(aadhar_path):
+                    if obj.aadhar.name.lower().endswith(('.png', '.jpg', '.jpeg', '.webp')):
+                        story.append(Paragraph("<b>Aadhar Image:</b>", styles["Heading3"]))
+                        story.append(Image(aadhar_path, width=200, height=150))
+                        story.append(Spacer(1, 12))
 
-            # NON-IMAGE = Show Download Link
-            else:
-                text = f"Download File: {file_url}"
+            # PHOTO
+            if obj.photo:
+                photo_path = os.path.join(settings.MEDIA_ROOT, obj.photo.name)
+                if os.path.exists(photo_path):
+                    story.append(Paragraph("<b>Photo:</b>", styles["Heading3"]))
+                    story.append(Image(photo_path, width=200, height=150))
+                    story.append(Spacer(1, 12))
 
-                # Print Blue Text
-                p.setFillColorRGB(0, 0, 1)
-                p.drawString(60, y, text)
-                p.setFillColorRGB(0, 0, 0)
+            # shop_docs & layout: only link, no embed
+            # Already handled above
 
-                # Make it clickable
-                p.linkURL(file_url, (60, y-2, 350, y+10), relative=0)
+            story.append(Spacer(1, 20))
 
-                y -= 25
+        doc.build(story)
+        return response
 
-            if y < 150:
-                p.showPage()
-                y = height - 50
-
-        # Render all 4 file fields
-        render_file("Aadhar", obj.aadhar)
-        render_file("Photo", obj.photo)
-        render_file("Shop Docs", obj.shop_docs)
-        render_file("Layout", obj.layout)
-
-        # Next page for next entry
-        p.showPage()
-        y = height - 50
-
-    p.save()
-    return response
+    download_selected_pdf.short_description = "Download selected records as PDF"
 
 
-class FssaiAdmin(admin.ModelAdmin):
-    list_display = ("id", "applicant_name", "business_name", "turnover", "created_at")
-    actions = [download_pdf]
-
-
-admin.site.register(FssaiRegistration, FssaiAdmin)
+admin.site.register(FssaiRegistration, FssaiRegistrationAdmin)
