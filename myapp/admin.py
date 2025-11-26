@@ -192,6 +192,13 @@ from reportlab.lib.styles import getSampleStyleSheet
 from django.http import HttpResponse
 from django.conf import settings
 import os
+from django.contrib import admin
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, PageBreak
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet
+from django.http import HttpResponse
+from django.conf import settings
+import os
 
 from .models import FssaiRegistration
 
@@ -222,16 +229,31 @@ class FssaiRegistrationAdmin(admin.ModelAdmin):
             story.append(Spacer(1, 15))
 
             # -------------------------
-            #   TEXT FIELDS PRINTABLE
+            #   TEXT FIELDS PRINTABLE (WITHOUT MEDIA LINKS)
             # -------------------------
-           
-            # Add page break before images
+            for field in obj._meta.fields:
+                value = getattr(obj, field.name)
+
+                # File fields → print ONLY file name (NO URL)
+                if hasattr(value, "url"):
+                    story.append(Paragraph(
+                        f"<b>{field.verbose_name}:</b> {value.name}",
+                        styles["Normal"]
+                    ))
+                else:
+                    story.append(Paragraph(
+                        f"<b>{field.verbose_name}:</b> {value}",
+                        styles["Normal"]
+                    ))
+
+                story.append(Spacer(1, 8))
+
+            # Page break before images
             story.append(PageBreak())
 
             # -------------------------
-            #   IMAGE FIELDS SEPARATE PAGES
+            #   IMAGE FIELDS ON SEPARATE PAGES
             # -------------------------
-
             image_fields = [
                 ("Aadhaar", obj.aadhar),
                 ("Photo", obj.photo),
@@ -246,11 +268,11 @@ class FssaiRegistrationAdmin(admin.ModelAdmin):
                     story.append(Paragraph(f"<b>{title}</b>", styles["Heading2"]))
                     story.append(Spacer(1, 20))
 
-                    # Only load if it is image format   
+                    # If file is a valid image format
                     if os.path.exists(file_path) and filefield.name.lower().endswith(('.jpg', '.jpeg', '.png', '.webp')):
                         story.append(Image(file_path, width=400, height=480))
                     else:
-                        story.append(Paragraph("File is not an image (showing only link above).", styles["Normal"]))
+                        story.append(Paragraph("Not an image file.", styles["Normal"]))
 
                     story.append(PageBreak())
 
@@ -261,7 +283,6 @@ class FssaiRegistrationAdmin(admin.ModelAdmin):
 
 
 admin.site.register(FssaiRegistration, FssaiRegistrationAdmin)
-
 
 
 
