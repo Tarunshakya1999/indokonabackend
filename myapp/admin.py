@@ -224,24 +224,7 @@ class FssaiRegistrationAdmin(admin.ModelAdmin):
             # -------------------------
             #   TEXT FIELDS PRINTABLE
             # -------------------------
-            for field in obj._meta.fields:
-                value = getattr(obj, field.name)
-
-                # File / Image → clickable link
-                if hasattr(value, "url"):
-                    file_url = request.build_absolute_uri(value.url)
-                    story.append(Paragraph(
-                        f"<b>{field.verbose_name}:</b> <a href='{file_url}'>{file_url}</a>",
-                        styles["Normal"]
-                    ))
-                else:
-                    story.append(Paragraph(
-                        f"<b>{field.verbose_name}:</b> {value}",
-                        styles["Normal"]
-                    ))
-
-                story.append(Spacer(1, 8))
-
+           
             # Add page break before images
             story.append(PageBreak())
 
