@@ -179,7 +179,6 @@ class MSMEAdmin(admin.ModelAdmin):
     list_display = [field.name for field in MSMERegistration._meta.fields]
     actions = [export_pdf]
 
-
 from django.contrib import admin
 from django.http import HttpResponse
 from django.conf import settings
@@ -196,7 +195,7 @@ from .models import FssaiRegistration
 def download_pdf(modeladmin, request, queryset):
 
     response = HttpResponse(content_type="application/pdf")
-    response["Content-Disposition"] = 'attachment; filename="fssai_records.pdf"'
+    response["Content-Disposition"] = 'attachment; filename=\"fssai_records.pdf\"'
 
     p = canvas.Canvas(response, pagesize=A4)
     width, height = A4
@@ -209,7 +208,7 @@ def download_pdf(modeladmin, request, queryset):
         y -= 30
         p.setFont("Helvetica", 12)
 
-        # ---- BASIC TEXT ----
+        # Basic Fields
         fields = [
             ("Applicant Name", obj.applicant_name),
             ("Business Name", obj.business_name),
@@ -219,60 +218,61 @@ def download_pdf(modeladmin, request, queryset):
             ("Processing", obj.processing),
         ]
 
-        for title, val in fields:
-            p.drawString(50, y, f"{title}: {val}")
+        for label, value in fields:
+            p.drawString(50, y, f"{label}: {value}")
             y -= 22
             if y < 150:
                 p.showPage()
                 y = height - 50
 
-        # ###############
-        # FILE RENDER FUNCTION
-        # ###############
+        # ---------- FILE RENDER FUNCTION ----------
         def render_file(title, filefield):
             nonlocal y
             if not filefield:
                 return
 
             file_path = os.path.join(settings.MEDIA_ROOT, filefield.name)
+            file_url = settings.MEDIA_URL + filefield.name
+            file_type, _ = guess_type(file_path)
 
             p.setFont("Helvetica-Bold", 13)
             p.drawString(50, y, f"{title}:")
             y -= 20
 
-            # Check file type
-            file_type, _ = guess_type(file_path)
-
-            # ---- IF IMAGE ----
+            # IMAGE
             if file_type and file_type.startswith("image"):
                 try:
-                    p.drawImage(ImageReader(file_path), 50, y - 180, width=200, height=180)
+                    p.drawImage(ImageReader(file_path), 50, y-180, width=200, height=180)
                     y -= 200
                 except:
-                    p.drawString(50, y, "[Error loading image]")
+                    p.drawString(60, y, "[Error loading image]")
                     y -= 20
 
+            # NON-IMAGE = Show Download Link
             else:
-                # ---- IF PDF / DOC — show download link ----
-                file_url = settings.MEDIA_URL + filefield.name
+                text = f"Download File: {file_url}"
 
-                p.setFillColorRGB(0, 0, 1)     # blue color link
-                p.drawString(60, y, f"Download File: {file_url}")
+                # Print Blue Text
+                p.setFillColorRGB(0, 0, 1)
+                p.drawString(60, y, text)
                 p.setFillColorRGB(0, 0, 0)
 
-                y -= 20
+                # Make it clickable
+                p.linkURL(file_url, (60, y-2, 350, y+10), relative=0)
+
+                y -= 25
 
             if y < 150:
                 p.showPage()
                 y = height - 50
 
-        # ########### RENDER ALL 4 FILES ###########
+        # Render all 4 file fields
         render_file("Aadhar", obj.aadhar)
         render_file("Photo", obj.photo)
-        render_file("Shop Document", obj.shop_docs)
-        render_file("Layout Document", obj.layout)
+        render_file("Shop Docs", obj.shop_docs)
+        render_file("Layout", obj.layout)
 
-        # New page for next record
+        # Next page for next entry
         p.showPage()
         y = height - 50
 
