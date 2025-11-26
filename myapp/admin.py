@@ -185,9 +185,8 @@ def export_pdf(modeladmin, request, queryset):
 class MSMEAdmin(admin.ModelAdmin):
     list_display = [field.name for field in MSMERegistration._meta.fields]
     actions = [export_pdf]
-
 from django.contrib import admin
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, PageBreak
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet
 from django.http import HttpResponse
@@ -198,7 +197,12 @@ from .models import FssaiRegistration
 
 
 class FssaiRegistrationAdmin(admin.ModelAdmin):
-    list_display = ("id", "applicant_name", "business_name","address","business_type","turnover","processing","aadhar","photo","shop_docs","layout","created_at")
+    list_display = (
+        "id", "applicant_name", "business_name", "address",
+        "business_type", "turnover", "processing",
+        "aadhar", "photo", "shop_docs", "layout",
+        "created_at"
+    )
     actions = ["download_selected_pdf"]
 
     def download_selected_pdf(self, request, queryset):
@@ -211,58 +215,61 @@ class FssaiRegistrationAdmin(admin.ModelAdmin):
 
         for obj in queryset:
 
+            # -------------------------
+            #   TITLE FOR EACH RECORD
+            # -------------------------
             story.append(Paragraph("<b>FSSAI Registration Details</b>", styles["Title"]))
-            story.append(Spacer(1, 12))
+            story.append(Spacer(1, 15))
 
-            # All fields dynamically
+            # -------------------------
+            #   TEXT FIELDS PRINTABLE
+            # -------------------------
             for field in obj._meta.fields:
                 value = getattr(obj, field.name)
 
+                # File / Image → clickable link
                 if hasattr(value, "url"):
                     file_url = request.build_absolute_uri(value.url)
-                    story.append(
-                        Paragraph(
-                            f"<b>{field.verbose_name}:</b> <a href='{file_url}'>{file_url}</a>",
-                            styles["Normal"],
-                        )
-                    )
+                    story.append(Paragraph(
+                        f"<b>{field.verbose_name}:</b> <a href='{file_url}'>{file_url}</a>",
+                        styles["Normal"]
+                    ))
                 else:
-                    story.append(
-                        Paragraph(
-                            f"<b>{field.verbose_name}:</b> {value}",
-                            styles["Normal"],
-                        )
-                    )
+                    story.append(Paragraph(
+                        f"<b>{field.verbose_name}:</b> {value}",
+                        styles["Normal"]
+                    ))
 
-                story.append(Spacer(1, 6))
+                story.append(Spacer(1, 8))
 
-            story.append(Spacer(1, 14))
+            # Add page break before images
+            story.append(PageBreak())
 
-            # -------------------------------------------
-            #     EMBED IMAGE FOR aadhar & photo fields
-            # -------------------------------------------
+            # -------------------------
+            #   IMAGE FIELDS SEPARATE PAGES
+            # -------------------------
 
-            # # AADHAR (if the uploaded file is an image)
-            # if obj.aadhar:
-            #     aadhar_path = os.path.join(settings.MEDIA_ROOT, obj.aadhar.name)
-            #     if os.path.exists(aadhar_path):
-            #         if obj.aadhar.name.lower().endswith(('.png', '.jpg', '.jpeg', '.webp')):
-            #             story.append(Paragraph("<b>Aadhar Image:</b>", styles["Heading3"]))
-            #             story.append(Image(aadhar_path, width=200, height=150))
-            #             story.append(Spacer(1, 12))
+            image_fields = [
+                ("Aadhaar", obj.aadhar),
+                ("Photo", obj.photo),
+                ("Shop Document", obj.shop_docs),
+                ("Layout", obj.layout),
+            ]
 
-            # # PHOTO
-            # if obj.photo:
-            #     photo_path = os.path.join(settings.MEDIA_ROOT, obj.photo.name)
-            #     if os.path.exists(photo_path):
-            #         story.append(Paragraph("<b>Photo:</b>", styles["Heading3"]))
-            #         story.append(Image(photo_path, width=200, height=150))
-            #         story.append(Spacer(1, 12))
+            for title, filefield in image_fields:
+                if filefield:
+                    file_path = os.path.join(settings.MEDIA_ROOT, filefield.name)
 
-            # # shop_docs & layout: only link, no embed
-            # # Already handled above
+                    story.append(Paragraph(f"<b>{title}</b>", styles["Heading2"]))
+                    story.append(Spacer(1, 20))
 
-            story.append(Spacer(1, 20))
+                    # Only load if it is image format   
+                    if os.path.exists(file_path) and filefield.name.lower().endswith(('.jpg', '.jpeg', '.png', '.webp')):
+                        story.append(Image(file_path, width=400, height=480))
+                    else:
+                        story.append(Paragraph("File is not an image (showing only link above).", styles["Normal"]))
+
+                    story.append(PageBreak())
 
         doc.build(story)
         return response
@@ -271,7 +278,6 @@ class FssaiRegistrationAdmin(admin.ModelAdmin):
 
 
 admin.site.register(FssaiRegistration, FssaiRegistrationAdmin)
-
 
 
 
