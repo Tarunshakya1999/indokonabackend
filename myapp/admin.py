@@ -87,89 +87,96 @@ class PublicProfileAdmin(admin.ModelAdmin):
     list_editable = ("is_varied",)
 
 
-
 from django.contrib import admin
 from django.http import HttpResponse
-from reportlab.pdfgen import canvas
-from reportlab.lib.utils import ImageReader
-from .models import MSMERegistration
-import os
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, PageBreak
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet
 from django.conf import settings
+import os
+
+from .models import MSMERegistration
 
 
 @admin.action(description="📄 Download Selected MSME Data as PDF")
 def export_pdf(modeladmin, request, queryset):
+
+    if queryset.count() != 1:
+        return HttpResponse("Please select only one record.")
+
+    obj = queryset.first()
+
+    filename = f"MSME_{obj.id}.pdf"
+
     response = HttpResponse(content_type="application/pdf")
-    response["Content-Disposition"] = 'attachment; filename="msme_data.pdf"'
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
 
-    p = canvas.Canvas(response)
-    y = 820
+    doc = SimpleDocTemplate(response, pagesize=A4)
+    styles = getSampleStyleSheet()
+    story = []
 
-    for obj in queryset:
+    # ---------------------------
+    # PDF TITLE
+    # ---------------------------
+    story.append(Paragraph("<b>MSME REGISTRATION DETAILS</b>", styles['Title']))
+    story.append(Spacer(1, 20))
 
-        # ------- ALL TEXT FIELDS -------
-        fields = [
-            ("Full Name", obj.full_name),
-            ("Mobile Number", obj.mobile_number),
-            ("Email", obj.email),
-            ("Aadhaar Number", obj.aadhaar_number),
-            ("Applicant Type", obj.applicant_type),
-            ("Business Name", obj.business_name),
-            ("Business Address", obj.business_address),
-            ("State", obj.state),
-            ("District", obj.district),
-            ("PIN Code", obj.pincode),
-            ("Business Type", obj.business_type),
-            ("Date of Starting", str(obj.date_of_starting)),
-            ("PAN Number", obj.pan_number),
-            ("Bank Account", obj.bank_account_number),
-            ("IFSC Code", obj.ifsc_code),
-            ("Employees", str(obj.number_of_employees)),
-            ("Investment", obj.investment_in_plant_machinery),
-            ("Annual Turnover", obj.annual_turnover),
-            ("Created At", str(obj.created_at)),
-        ]
+    # ---------------------------
+    # TEXT FIELDS
+    # ---------------------------
+    fields = [
+        ("Full Name", obj.full_name),
+        ("Mobile Number", obj.mobile_number),
+        ("Email", obj.email),
+        ("Aadhaar Number", obj.aadhaar_number),
+        ("Applicant Type", obj.applicant_type),
+        ("Business Name", obj.business_name),
+        ("Business Address", obj.business_address),
+        ("State", obj.state),
+        ("District", obj.district),
+        ("PIN Code", obj.pincode),
+        ("Business Type", obj.business_type),
+        ("Date of Starting", str(obj.date_of_starting)),
+        ("PAN Number", obj.pan_number),
+        ("Bank Account No.", obj.bank_account_number),
+        ("IFSC Code", obj.ifsc_code),
+        ("No. of Employees", str(obj.number_of_employees)),
+        ("Investment in Plant/Machinery", obj.investment_in_plant_machinery),
+        ("Annual Turnover", obj.annual_turnover),
+        ("Created At", obj.created_at.strftime("%d-%m-%Y %H:%M")),
+    ]
 
-        for label, value in fields:
-            p.drawString(40, y, f"{label}: {value}")
-            y -= 20
+    for label, value in fields:
+        story.append(Paragraph(f"<b>{label}:</b> {value}", styles["Normal"]))
+        story.append(Spacer(1, 10))
 
-            if y < 100:
-                p.showPage()
-                y = 820
+    story.append(PageBreak())  # next page for images
 
-        # ------- Aadhaar Front Image -------
-        if obj.aadhaar_front:
-            img_path = os.path.join(settings.MEDIA_ROOT, obj.aadhaar_front.name)
-            if os.path.exists(img_path):
-                p.drawString(40, y, "Aadhaar Front:")
-                y -= 160
-                p.drawImage(ImageReader(img_path), 40, y, width=250, height=150)
-                y -= 20
+    # ---------------------------
+    # IMAGE FIELDS – Each on New Page
+    # ---------------------------
+    image_fields = [
+        ("Aadhaar Front", obj.aadhaar_front),
+        ("Aadhaar Back", obj.aadhaar_back),
+        ("Business Proof", obj.business_proof),
+    ]
 
-        # ------- Aadhaar Back Image -------
-        if obj.aadhaar_back:
-            img_path = os.path.join(settings.MEDIA_ROOT, obj.aadhaar_back.name)
-            if os.path.exists(img_path):
-                p.drawString(40, y, "Aadhaar Back:")
-                y -= 160
-                p.drawImage(ImageReader(img_path), 40, y, width=250, height=150)
-                y -= 20
+    for title, filefield in image_fields:
+        if filefield:
+            file_path = os.path.join(settings.MEDIA_ROOT, filefield.name)
 
-        # ------- Business Proof Image -------
-        if obj.business_proof:
-            img_path = os.path.join(settings.MEDIA_ROOT, obj.business_proof.name)
-            if os.path.exists(img_path):
-                p.drawString(40, y, "Business Proof:")
-                y -= 160
-                p.drawImage(ImageReader(img_path), 40, y, width=250, height=150)
-                y -= 20
+            story.append(Paragraph(f"<b>{title}</b>", styles["Heading2"]))
+            story.append(Spacer(1, 20))
 
-        # New Page for next record
-        p.showPage()
-        y = 820
+            if os.path.exists(file_path) and filefield.name.lower().endswith((".jpg", ".jpeg", ".png")):
+                story.append(Image(file_path, width=400, height=500))
 
-    p.save()
+            else:
+                story.append(Paragraph("Unable to load image", styles["Normal"]))
+
+            story.append(PageBreak())
+
+    doc.build(story)
     return response
 
 
