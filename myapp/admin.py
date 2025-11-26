@@ -235,25 +235,25 @@ class FssaiRegistrationAdmin(admin.ModelAdmin):
             #     EMBED IMAGE FOR aadhar & photo fields
             # -------------------------------------------
 
-            # AADHAR (if the uploaded file is an image)
-            if obj.aadhar:
-                aadhar_path = os.path.join(settings.MEDIA_ROOT, obj.aadhar.name)
-                if os.path.exists(aadhar_path):
-                    if obj.aadhar.name.lower().endswith(('.png', '.jpg', '.jpeg', '.webp')):
-                        story.append(Paragraph("<b>Aadhar Image:</b>", styles["Heading3"]))
-                        story.append(Image(aadhar_path, width=200, height=150))
-                        story.append(Spacer(1, 12))
+            # # AADHAR (if the uploaded file is an image)
+            # if obj.aadhar:
+            #     aadhar_path = os.path.join(settings.MEDIA_ROOT, obj.aadhar.name)
+            #     if os.path.exists(aadhar_path):
+            #         if obj.aadhar.name.lower().endswith(('.png', '.jpg', '.jpeg', '.webp')):
+            #             story.append(Paragraph("<b>Aadhar Image:</b>", styles["Heading3"]))
+            #             story.append(Image(aadhar_path, width=200, height=150))
+            #             story.append(Spacer(1, 12))
 
-            # PHOTO
-            if obj.photo:
-                photo_path = os.path.join(settings.MEDIA_ROOT, obj.photo.name)
-                if os.path.exists(photo_path):
-                    story.append(Paragraph("<b>Photo:</b>", styles["Heading3"]))
-                    story.append(Image(photo_path, width=200, height=150))
-                    story.append(Spacer(1, 12))
+            # # PHOTO
+            # if obj.photo:
+            #     photo_path = os.path.join(settings.MEDIA_ROOT, obj.photo.name)
+            #     if os.path.exists(photo_path):
+            #         story.append(Paragraph("<b>Photo:</b>", styles["Heading3"]))
+            #         story.append(Image(photo_path, width=200, height=150))
+            #         story.append(Spacer(1, 12))
 
-            # shop_docs & layout: only link, no embed
-            # Already handled above
+            # # shop_docs & layout: only link, no embed
+            # # Already handled above
 
             story.append(Spacer(1, 20))
 
