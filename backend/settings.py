@@ -41,12 +41,12 @@ MIDDLEWARE = [
 ]
 
 
-CORS_ALLOWED_ORIGINS = [
-    "https://indokonafrontend.vercel.app",
-    "https://www.indokona.com",
-    "https://indokona.com",
+# CORS_ALLOWED_ORIGINS = [
+#     "https://indokonafrontend.vercel.app",
+#     "https://www.indokona.com",
+#     "https://indokona.com",
     
-]
+# ]
 
 
 ROOT_URLCONF = "backend.urls"
@@ -166,6 +166,25 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
+
+
+CORS_ALLOW_METHODS = [
+    "DELETE",
+    "GET",
+    "OPTIONS",
+    "PATCH",
+    "POST",
+    "PUT",
+]
+
+
+CORS_ALLOW_HEADERS = [
+    "content-type",
+    "authorization",
+    "accept",
+]
+
+
 
 
 
