@@ -417,9 +417,14 @@ from rest_framework import status
 from django.core.mail import send_mail
 from .models import Contact
 from .serializers import ContactSerializer
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.permissions import AllowAny
+from rest_framework.decorators import api_view, permission_classes
 
 
 @api_view(['POST'])
+@csrf_exempt
+@permission_classes([AllowAny])
 def contact_api(request):
     serializer = ContactSerializer(data=request.data)
     if serializer.is_valid():
