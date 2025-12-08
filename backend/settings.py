@@ -147,25 +147,24 @@ EMAIL_HOST_PASSWORD = 'wznf onhw sqoh cleo'
 
 
 
-# -------- RAZORPAY KEYS --------
-RAZORPAY_KEY_ID = "rzp_test_XXXXXXX"
-RAZORPAY_KEY_SECRET = "YOUR_SECRET_KEY"
 
 
 
-CORS_ALLOWED_ORIGINS = [
-    "https://indokonafrontend.vercel.app",
-    "https://www.indokona.com",
-    "https://indokona.com",
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "https://indokonafrontend.vercel.app",
+#     "https://www.indokona.com",
+#     "https://indokona.com",
+# ]
 
-CSRF_TRUSTED_ORIGINS = [
-    "https://indokonafrontend.vercel.app",
-    "https://www.indokona.com",
-    "https://indokona.com",
-]
+# CSRF_TRUSTED_ORIGINS = [
+#     "https://indokonafrontend.vercel.app",
+#     "https://www.indokona.com",
+#     "https://indokona.com",
+# ]
 
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = True
+
 
 
 CORS_ALLOW_METHODS = [
