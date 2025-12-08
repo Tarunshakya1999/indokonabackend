@@ -410,3 +410,44 @@ class TrademarkView(APIView):
                 status=status.HTTP_201_CREATED
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from django.core.mail import send_mail
+from .serializers import ContactSerializer
+
+@api_view(["POST"])
+def contact_form(request):
+    serializer = ContactSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+
+        name = serializer.data["name"]
+        email = serializer.data["email"]
+        phone = serializer.data["phone"]
+        service = serializer.data["service"]
+        message = serializer.data["message"]
+
+        subject = f"New Contact Message from {name}"
+        body = f"""
+Name: {name}
+Email: {email}
+Phone: {phone}
+Service: {service}
+
+Message:
+{message}
+        """
+
+        send_mail(
+            subject,
+            body,
+            "shakyatarun32@gmail.com",
+            ["shakyatarun32@gmail.com"],  # YOUR RECEIVING EMAIL
+            fail_silently=False,
+        )
+
+        return Response({"success": "Message sent!"})
+
+    return Response(serializer.errors, status=400)
