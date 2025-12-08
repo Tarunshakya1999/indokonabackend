@@ -411,43 +411,46 @@ class TrademarkView(APIView):
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from rest_framework import status
 from django.core.mail import send_mail
+from .models import Contact
 from .serializers import ContactSerializer
 
-@api_view(["POST"])
-def contact_form(request):
+
+@api_view(['POST'])
+def contact_api(request):
     serializer = ContactSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
 
+        # Email Send
         name = serializer.data["name"]
         email = serializer.data["email"]
         phone = serializer.data["phone"]
         service = serializer.data["service"]
         message = serializer.data["message"]
 
-        subject = f"New Contact Message from {name}"
+        subject = f"New Contact Form Submission - {name}"
         body = f"""
-Name: {name}
-Email: {email}
-Phone: {phone}
-Service: {service}
+        Name: {name}
+        Email: {email}
+        Phone: {phone}
+        Service: {service}
 
-Message:
-{message}
+        Message:
+        {message}
         """
 
         send_mail(
             subject,
             body,
-            "shakyatarun32@gmail.com",
-            ["shakyatarun32@gmail.com"],  # YOUR RECEIVING EMAIL
+            "shakyatarun32@gmail.com",      # FROM
+            ["shakyatarun32@gmail.com"],    # TO
             fail_silently=False,
         )
 
-        return Response({"success": "Message sent!"})
+        return Response({"message": "Message sent successfully!"}, status=status.HTTP_200_OK)
 
-    return Response(serializer.errors, status=400)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
