@@ -23,6 +23,7 @@ router.register(r'myreels', MyReelsViewSet)
 router.register(r'mypost', MypostViewSet)
 router.register(r"comments", CommentViewSet)
 router.register(r'fssai', FssaiRegistrationViewSet, basename='fssai')
+router.register(r'mycontactviewSet',MyContactViewSet)
 
 
 
