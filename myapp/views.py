@@ -461,6 +461,65 @@ class TrademarkView(APIView):
 #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+from rest_framework import viewsets, status
+from rest_framework.response import Response
+from django.core.mail import send_mail
+from django.conf import settings
+
 class MyContactViewSet(viewsets.ModelViewSet):
     queryset = Contact.objects.all()
     serializer_class = ContactSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            contact = serializer.save()  # ✅ data DB me save
+
+            # ✅ 1️⃣ Admin ko mail
+            admin_subject = f"New Contact Form - {contact.name}"
+            admin_message = f"""
+New Contact Request
+
+Name: {contact.name}
+Email: {contact.email}
+Phone: {contact.phone}
+Service: {contact.service}
+
+Message:
+{contact.message}
+"""
+            send_mail(
+                admin_subject,
+                admin_message,
+                settings.DEFAULT_FROM_EMAIL,
+                ["shakyatarun32@gmail.com"],  # ✅ Admin email
+                fail_silently=False,
+            )
+
+            # ✅ 2️⃣ User ko auto-reply mail
+            user_subject = "Thanks for contacting Indokona Tech Solutions"
+            user_message = f"""
+Hi {contact.name},
+
+Thank you for reaching out to Indokona Tech Solutions.
+
+We have received your message regarding "{contact.service}".
+Our team will review it and contact you shortly.
+
+Regards,
+Indokona Tech Solutions
+www.indokona.com
+"""
+            send_mail(
+                user_subject,
+                user_message,
+                settings.DEFAULT_FROM_EMAIL,
+                [contact.email],  # ✅ User email
+                fail_silently=True,
+            )
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+

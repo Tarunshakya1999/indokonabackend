@@ -144,6 +144,7 @@ EMAIL_USE_TLS = True
 
 EMAIL_HOST_USER = 'shakyatarun32@gmail.com'
 EMAIL_HOST_PASSWORD = 'wznf onhw sqoh cleo'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 
 
