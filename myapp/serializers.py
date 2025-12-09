@@ -326,12 +326,12 @@ class TrademarkSerializer(serializers.ModelSerializer):
 
 
 
-# from rest_framework import serializers
-# from .models import Contact
+from rest_framework import serializers
+from .models import Contact
 
-# class ContactSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Contact
-#         fields = "__all__"
+class ContactSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Contact
+        fields = "__all__"
 
 

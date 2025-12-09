@@ -48,7 +48,7 @@ urlpatterns = [
     # Refresh token
     path('api/refresh2/', TokenRefreshView.as_view()),
     path("api/msme-register/", MSMERegisterView.as_view(), name="msme-register"),
-    # path('api/contact/', contact_api),
+    path('api/contact/', contact_api),
 
 
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

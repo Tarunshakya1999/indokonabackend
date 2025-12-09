@@ -411,51 +411,51 @@ class TrademarkView(APIView):
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# from rest_framework.response import Response
-# from rest_framework.decorators import api_view
-# from rest_framework import status
-# from django.core.mail import send_mail
-# from .models import Contact
-# from .serializers import ContactSerializer
-# from django.views.decorators.csrf import csrf_exempt
-# from rest_framework.permissions import AllowAny
-# from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from rest_framework import status
+from django.core.mail import send_mail
+from .models import Contact
+from .serializers import ContactSerializer
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.permissions import AllowAny
+from rest_framework.decorators import api_view, permission_classes
 
 
-# @api_view(['POST'])
-# @csrf_exempt
-# @permission_classes([AllowAny])
-# def contact_api(request):
-#     serializer = ContactSerializer(data=request.data)
-#     if serializer.is_valid():
-#         serializer.save()
+@api_view(['POST'])
+@csrf_exempt
+@permission_classes([AllowAny])
+def contact_api(request):
+    serializer = ContactSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
 
-#         # Email Send
-#         name = serializer.data["name"]
-#         email = serializer.data["email"]
-#         phone = serializer.data["phone"]
-#         service = serializer.data["service"]
-#         message = serializer.data["message"]
+        # Email Send
+        name = serializer.data["name"]
+        email = serializer.data["email"]
+        phone = serializer.data["phone"]
+        service = serializer.data["service"]
+        message = serializer.data["message"]
 
-#         subject = f"New Contact Form Submission - {name}"
-#         body = f"""
-#         Name: {name}
-#         Email: {email}
-#         Phone: {phone}
-#         Service: {service}
+        subject = f"New Contact Form Submission - {name}"
+        body = f"""
+        Name: {name}
+        Email: {email}
+        Phone: {phone}
+        Service: {service}
 
-#         Message:
-#         {message}
-#         """
+        Message:
+        {message}
+        """
 
-#         send_mail(
-#             subject,
-#             body,
-#             "shakyatarun32@gmail.com",      # FROM
-#             ["shakyatarun32@gmail.com"],    # TO
-#             fail_silently=False,
-#         )
+        send_mail(
+            subject,
+            body,
+            "shakyatarun32@gmail.com",      # FROM
+            ["shakyatarun32@gmail.com"],    # TO
+            fail_silently=False,
+        )
 
-#         return Response({"message": "Message sent successfully!"}, status=status.HTTP_200_OK)
+        return Response({"message": "Message sent successfully!"}, status=status.HTTP_200_OK)
 
-#     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

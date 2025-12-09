@@ -28,6 +28,7 @@ router.register(r'fssai', FssaiRegistrationViewSet, basename='fssai')
 
 
 
+
 urlpatterns = [
     path('', include(router.urls)),
 ]
