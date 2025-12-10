@@ -464,3 +464,5 @@ class TrademarkView(APIView):
 class MyContactViewSet(viewsets.ModelViewSet):
     queryset = Contact.objects.all()
     serializer_class = ContactSerializer
+    
+
